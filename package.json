@@ -1,0 +1,35 @@
+{
+  "name": "todo",
+  "version": "1.0.0",
+  "description": "TODO List Project",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "webpack serve",
+    "create-page": "git branch gh-pages",
+    "sync": "git checkout gh-pages && git merge main --no-edit",
+    "build": "webpack",
+    "deploy-commit": "git add dist -f && git commit -m 'Deployment commit'",
+    "merge": "git checkout gh-pages && git merge main --no-edit",
+    "deploy": "git subtree push --prefix dist origin gh-pages"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SpMarc4/TODO.git"
+  },
+  "author": "M.San",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SpMarc4/TODO/issues"
+  },
+  "homepage": "https://github.com/SpMarc4/TODO#readme",
+  "devDependencies": {
+    "css-loader": "^7.1.4",
+    "html-webpack-plugin": "^5.6.7",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.108.4",
+    "webpack-cli": "^7.2.1",
+    "webpack-dev-server": "^6.0.0",
+    "webpack-merge": "^6.0.1"
+  }
+}
