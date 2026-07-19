@@ -1,0 +1,29 @@
+/* Reset Add Config */
+
+*,
+body {
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    height: 100%;
+    width: 100%;
+    font-family: 'Roboto';
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* TODO: Main Container */
+
+.todo {
+    width: 75vw;
+    height: 70vw;
+    background-color: red;
+}
+

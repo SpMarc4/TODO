@@ -3,4 +3,9 @@ Proyecto TODO. Todos hemos necesitado en algún momento listar nuestras tareas d
 ¡Esta App lo hace posible!
 
 
-## Creditos
+## Créditos
+
+-   Background Image [Unsplash] (https://unsplash.com/)
+    Licencia [Unsplash Licence]: (https://unsplash.com/es/licencia)
+    Fuente: [https://unsplash.com/es/fotos/verdura-de-hoja-verde-sobre-superficie-de-madera-marron-EWDvHNNfUmQ]
+    Autor: [@goumbik]

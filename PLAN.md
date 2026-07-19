@@ -80,7 +80,7 @@ Contiene 3 interfaces:
 
 ## DOM
 
-- La propuesta es crear un archivo html para cada pestaña.
+- La propuesta es crear un archivo html global y para cada pestaña un contenedor que se haga visible cuando se clicke cada una o renderizar todo para que haya solo los objetos necesarios.
 - Utilizar un render, para actualizar el DOM según el botón clicado.
 - Cada página tendrá su propio render.
 - Utilizar modales:
