@@ -22,8 +22,83 @@ body {
 /* TODO: Main Container */
 
 .todo {
+    background-image: url('assets/background-image.jpg');
     width: 75vw;
-    height: 70vw;
-    background-color: red;
+    height: 60vh;
+    background-color: whitesmoke;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 
+/* TODO layout */
+.todo > *{
+    border: 2px solid red;
+}
+
+.todo-header {
+    grid-area: header;
+}
+
+.todo-main {
+    grid-area: main;
+}
+
+.todo-sidebar {
+    grid-area: sidebar;
+}
+
+.todo-footer {
+    grid-area: footer;
+}
+
+.todo {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    grid-template-rows: 1fr 4fr 1fr;
+    grid-template-areas: 
+        "header header"
+        "sidebar main"
+        "footer footer"
+    ;
+}
+
+/* Header */
+
+.todo-header {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    padding: 12px;
+}
+
+.todo-header h1 {
+    flex: 1;
+    margin: 0px;
+    padding: 0px;
+}
+
+/* Footer */
+.todo-footer {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    padding: 12px;
+}
+
+/* Sidebar */
+
+.todo-sidebar {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.btn-sidebar,
+.projects-sidebar {
+    flex: 1;
+    width: 100px;
+    padding: 12px;
+    margin: 12px;
+}
+/* Main */
