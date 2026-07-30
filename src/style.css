@@ -1,3 +1,50 @@
+/* Assets */
+
+@font-face {
+    font-family: 'PlayWrite';
+    src: url("assets/fonts/PlaywriteNZGuides-Regular.woff");
+}
+
+@font-face {
+    font-family: 'SpaceGrotesk';
+    src: url("assets/fonts/SpaceGrotesk-Regular.woff2");
+}
+
+@font-face {
+    font-family: 'SpaceGrotesk';
+    src: url("assets/fonts/SpaceGrotesk-Bold.woff2");
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: 'SpaceGrotesk';
+    src: url("assets/fonts/SpaceGrotesk-Light.woff2");
+    font-weight: lighter;
+}
+
+@font-face {
+    font-family: 'SpaceGrotesk';
+    src: url("assets/fonts/SpaceGrotesk-Medium.woff2");
+    font-weight: 500;
+}
+
+@font-face {
+    font-family: 'SpaceGrotesk';
+    src: url("assets/fonts/SpaceGrotesk-SemiBold.woff2");
+    font-weight: 800;
+}
+
+@font-face {
+    font-family: 'ScienceGothic';
+    src: url("assets/fonts/ScienceGothic-Regular.ttf");
+}
+
+@font-face {
+    font-family: 'ScienceGothic';
+    src: url("assets/fonts/ScienceGothic-Bold.ttf");
+    font-weight: bold;
+}
+
 /* Reset Add Config */
 
 *,
@@ -21,14 +68,23 @@ body {
 
 /* TODO: Main Container */
 
+.todo-background,
 .todo {
-    background-image: url('assets/background-image.jpg');
     width: 75vw;
     height: 60vh;
+}
+
+.todo-background {
+    position: absolute;
     background-color: whitesmoke;
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
+    background-image:
+        radial-gradient(black 1.5px, transparent 1.5px),
+        radial-gradient(grey 1.5px, transparent 1.5px);
+    background-size: 20px 20px;
+    background-position: 0px 0px, 10px 10px;
+    mask-image: radial-gradient(ellipse at center, rgba(128, 128, 128, 0) 20%, rgba(128, 128, 128, 0.397) 100%);
+    mask-size: 100% 100%;
+    mask-repeat: no-repeat;
 }
 
 /* TODO layout */
@@ -61,6 +117,8 @@ body {
         "sidebar main"
         "footer footer"
     ;
+    border-radius: 12px;
+    box-shadow: 0px 0px 6px 0px;
 }
 
 /* Header */
@@ -74,6 +132,7 @@ body {
 
 .todo-header h1 {
     flex: 1;
+    font-family: 'ScienceGothic';
     margin: 0px;
     padding: 0px;
 }
@@ -88,17 +147,33 @@ body {
 
 /* Sidebar */
 
-.todo-sidebar {
+.todo-sidebar,
+.projects-sidebar {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    text-align: center;
+    justify-items: flex-start;
 }
 
-.btn-sidebar,
 .projects-sidebar {
-    flex: 1;
-    width: 100px;
-    padding: 12px;
-    margin: 12px;
+    flex: 2;
+}
+
+.projects-sidebar h3 {
+    font-family: 'ScienceGothic';
+}
+
+.btn-sidebar {
+    font-family: 'SpaceGrotesk';
+    padding: 12px 0px;
+    margin: 12px 4px;
+    background-color: whitesmoke;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0px 0px 4px black;
+    cursor: pointer;
+}
+
+.btn-sidebar {
 }
 /* Main */
