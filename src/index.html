@@ -6,22 +6,94 @@
     <title>Document</title>
 </head>
 <body>
-    <div class="todo-background"></div>
     <div class="todo">
         <div class="todo-header">
             <h1>TODO List</h1>
         </div>
-        <nav class="todo-sidebar">
-            <button class="btn-sidebar">TODOS</button>
-            <button class="btn-sidebar">Today</button>
-            <button class="btn-sidebar">Week</button>
+        <div class="todo-sidebar">
+            <div class="menu-sidebar">
+                <button class="btn-sidebar">TODOS</button>
+                <button class="btn-sidebar">Today</button>
+                <button class="btn-sidebar">Week</button>
+                <button class="btn-sidebar">Notes</button>
+            </div>
             <div class="projects-sidebar">
                 <h3>Projects</h3>
-                <button class="btn-sidebar btn-project">Project 1</button>
+                <div class="projects-sidebar-container">
+                    <div class="project-container">
+                        <button class="btn-project">Project 1</button>
+                        <button class="btn-project-delete">X</button>
+                    </div>
+                    <div class="project-container">
+                        <button class="btn-project">Project 1</button>
+                        <button class="btn-project-delete">X</button>
+                    </div>
+                    <div class="project-container">
+                        <button class="btn-project">Project 1</button>
+                        <button class="btn-project-delete">X</button>
+                    </div>
+                    <div class="project-container">
+                        <button class="btn-project">Project 1</button>
+                        <button class="btn-project-delete">X</button>
+                    </div>
+                    <div class="project-container">
+                        <button class="btn-project">Project 1</button>
+                        <button class="btn-project-delete">X</button>
+                    </div>
+                    <div class="project-container">
+                        <button class="btn-project">Project 1</button>
+                        <button class="btn-project-delete">X</button>
+                    </div>
+                    <div class="project-container">
+                        <button class="btn-project">Project 1</button>
+                        <button class="btn-project-delete">X</button>
+                    </div>
+                    <div class="project-container">
+                        <button class="btn-project">Project 1</button>
+                        <button class="btn-project-delete">X</button>
+                    </div>
+                    <div class="project-container">
+                        <button class="btn-project">Project 1</button>
+                        <button class="btn-project-delete">X</button>
+                    </div>
+                    <div class="project-container">
+                        <button class="btn-project">Project 1</button>
+                        <button class="btn-project-delete">X</button>
+                    </div>
+                    <div class="project-container">
+                        <button class="btn-project">Project 1</button>
+                        <button class="btn-project-delete">X</button>
+                    </div>
+                    
+                    <div class="project-container">
+                        <button class="btn-project">Project 1</button>
+                        <button class="btn-project-delete">X</button>
+                    </div>                    
+                </div>
+
             </div>
-        </nav>
-        <section class="todo-main"></section>
+            <div class="create-sidebar">
+                <button class="btn-sidebar" id="create">Create</button>
+            </div>
+        </div>
+        <section class="todo-main">
+            <div class="todo-item-col">
+                <div class="todo-item-col info">
+                    <div class="todo-item-col info prior">
+
+                    </div>
+                    <input type="checkbox" class="todo-item-col info check">
+                    <div class="todo-item-col info name">Todo 1</div>
+                </div>
+                <div class="todo-item-col act">
+                    <div class="todo-item-col act ">
+
+                    </div>
+                </div>
+            </div>
+        </section>
         <footer class="todo-footer">Date:</footer>
     </div>
+    <div class="todo-background"></div>
 </body>
 </html>

@@ -55,9 +55,9 @@ body {
 
 html,
 body {
-    height: 100%;
-    width: 100%;
     font-family: 'Roboto';
+    width: 100%;
+    height: 100%;
 }
 
 body {
@@ -66,12 +66,23 @@ body {
     align-items: center;
 }
 
+button,
+h3 {
+    min-height: 0;
+    min-width: 0;
+}
+
 /* TODO: Main Container */
 
-.todo-background,
+/* .todo-background, */
+.todo,
+.todo-background {
+    width: 90vw;
+    min-height: 60vh;
+}
+
 .todo {
-    width: 75vw;
-    height: 60vh;
+    z-index: 1;
 }
 
 .todo-background {
@@ -85,12 +96,30 @@ body {
     mask-image: radial-gradient(ellipse at center, rgba(128, 128, 128, 0) 20%, rgba(128, 128, 128, 0.397) 100%);
     mask-size: 100% 100%;
     mask-repeat: no-repeat;
+    z-index: 0;
 }
 
-/* TODO layout */
-.todo > *{
-    border: 2px solid red;
+/* TODO: General items config */
+
+.todo-header,
+.todo-sidebar,
+.todo-footer,
+.todo-main {
+    margin: 12px;
+    padding: 12px;
+    border: 2px solid whitesmoke;
+    border-radius: 8px;
+    background-color: rgba(245, 245, 245, 0.589);
+
 }
+
+.todo > * {
+    border: red 2px solid;
+    min-width: 0;
+    min-height: 0;
+}
+
+/* TODO: Layout */
 
 .todo-header {
     grid-area: header;
@@ -111,7 +140,7 @@ body {
 .todo {
     display: grid;
     grid-template-columns: 1fr 3fr;
-    grid-template-rows: 1fr 4fr 1fr;
+    grid-template-rows: 1fr minmax(50vh, 4fr) 1fr;
     grid-template-areas: 
         "header header"
         "sidebar main"
@@ -147,26 +176,76 @@ body {
 
 /* Sidebar */
 
-.todo-sidebar,
-.projects-sidebar {
+.todo-sidebar {
+    min-height: 0;
     display: flex;
+    gap: 24px;
     flex-direction: column;
     text-align: center;
-    justify-items: flex-start;
+}
+
+.menu-sidebar {
+    min-height: 0;
+    flex: 3;
+    display: flex;
+    gap: 6px;
+    flex-direction: column;
 }
 
 .projects-sidebar {
-    flex: 2;
+    min-height: 40vh;
+    display: flex;
+    align-content: flex-start;
+    padding: 2px;
+    gap: 6px;
+    flex-direction: column;
+    flex: 6;
+    min-height: 0;
+    overflow-y: hidden;
+}
+
+.projects-sidebar-container {
+    flex: 7;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 8px;
+    overflow-y: scroll;
+}
+
+.project-container {
+    padding: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+}
+
+.btn-project {
+    flex: 5;
+}
+
+.btn-sidebar.btn-project-delete {
+    flex: 1;
+}
+
+.create-sidebar {
+    min-height: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .projects-sidebar h3 {
+    flex: 1;
     font-family: 'ScienceGothic';
 }
 
-.btn-sidebar {
+.btn-sidebar,
+.btn-project {
     font-family: 'SpaceGrotesk';
-    padding: 12px 0px;
-    margin: 12px 4px;
+    min-height: 16px;
     background-color: whitesmoke;
     border: none;
     border-radius: 10px;
@@ -175,5 +254,24 @@ body {
 }
 
 .btn-sidebar {
+    flex: 1;
 }
+
+.btn-project {
+    max-height: 16px;
+    font-size: 0.7em;
+}
+
+.btn-project-delete {
+    flex: 1;
+    font-size: 0.7em;
+    background-color: transparent;
+    border-radius: 2px;
+    color: red;
+    border: none;
+    box-shadow: 0px 0px 4px red;
+    cursor: pointer;
+}
+
 /* Main */
+
