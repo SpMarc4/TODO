@@ -84,9 +84,17 @@ h3 {
     min-width: 0;
 }
 
+button,
+input[type='checkbox'] {
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
 /* TODO: Main Container */
 
-/* .todo-background, */
 .todo,
 .todo-background,
 div[class^="modal"] {
@@ -105,12 +113,16 @@ div[class^="modal"] {
     mask-image: radial-gradient(ellipse at center, var(--mask-secondary-color) 20%, var(--mask-main-color) 100%);
     mask-size: 100% 100%;
     mask-repeat: no-repeat;
-    z-index: 0;
+    z-index: -1;
 }
 
 .todo {
+    position: absolute;
     z-index: 1;
 }
+
+
+
 
 /* TODO: General items config */
 
@@ -342,10 +354,65 @@ div[class^="modal"] {
 .modals {
     position: absolute;
     z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: var(--modal-bg-color);
     margin: 24px;
     border-radius: 12px;
     
+}
+
+div[class^="modal-"] {
+    width: 50%;
+    height: 50%;
+    display: flex;
+    padding: 12px;
+
+    border: 2px solid var(--delete-color);
+    background-color: var(--main-color);
+    border-radius: 12px;
+}
+
+.modal-create {
+    position: relative;
+    flex-direction: column;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-create .btn-modal {
+    flex: 1;
+    min-width: 120px;
+    max-height: 60px;
+    border-radius: 12px;
+    box-shadow: 0px 0px 4px var(--bg-main-color);
+    border: none;
+    
+}
+
+.btn-modal-close {
+    position: absolute;
+    padding: 6px;
+    top: 12px;
+    right: 12px;
+    border: 1px solid var(--bg-secondary-color);
+    border-radius: 6px;
+    background-color: var(--modal-bg-color);
+}
+
+.modal-create .btn-modal,
+.btn-modal-close {
+    color: var(--main-color);
+    font-family: 'SpaceGrotesk';
+    font-weight: bold;
+    background-color: var(--mask-main-color);
+    text-shadow: 
+        1px 1px 0 var(--modal-bg-color),
+        1px -1px 0 var(--modal-bg-color),
+        -1px 1px 0 var(--modal-bg-color),
+        -1px -1px 0 var(--modal-bg-color);
 }
 
 /* Buttons Style */
@@ -358,7 +425,7 @@ div[class^="modal"] {
     background-color: var(--main-color);
     border: none;
     border-radius: 10px;
-    box-shadow: 0px 0px 4px black;
+    box-shadow: 0px 0px 4px var(--bg-main-color);
     cursor: pointer;
 }
 
@@ -380,6 +447,3 @@ div[class^="modal"] {
     cursor: pointer;
 }
 
-input[type='checkbox'] {
-    cursor: pointer;
-}
