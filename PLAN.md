@@ -63,7 +63,7 @@ Pestañas:
 TODO:
 Contiene 3 interfaces:
     - Comprimida: La que aparece en las pestañas, contiene:
-        - Prioridad, Checkbox, Nombre, botón detalle, Fecha, prioridad, botón editar y botón eliminar.
+        - Prioridad, Checkbox, Nombre, botón detalle, Fecha, botón editar y botón eliminar.
     - Expandida: La que aparece al clicar en detalles. Te muestra todas las propiedades que has definido del TODO en formato modal.
     - Crear/Editable: Modal que permite definir un título, descripción, fecha, prioridad y botón de añadir/confirmar edición.
 

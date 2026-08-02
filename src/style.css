@@ -47,6 +47,18 @@
 
 /* Reset Add Config */
 
+:root {
+    --bg-main-color: black;
+    --bg-secondary-color: grey;
+    --mask-secondary-color: rgba(128, 128, 128, 0);
+    --mask-main-color: rgba(128, 128, 128, 0.4);
+    --main-color: whitesmoke;
+    --secondary-color: rgba(128, 128, 128, 0.200);
+    --alternative-color: rgba(245, 245, 245, 0.200);
+    --delete-color: red;
+    --modal-bg-color: rgba(0, 0, 0, 0.3);
+}
+
 *,
 body {
     margin: 0;
@@ -76,27 +88,28 @@ h3 {
 
 /* .todo-background, */
 .todo,
-.todo-background {
+.todo-background,
+div[class^="modal"] {
     width: 90vw;
-    min-height: 60vh;
-}
-
-.todo {
-    z-index: 1;
+    height: 60vh;
 }
 
 .todo-background {
     position: absolute;
-    background-color: whitesmoke;
+    background-color: var(--main-color);
     background-image:
-        radial-gradient(black 1.5px, transparent 1.5px),
-        radial-gradient(grey 1.5px, transparent 1.5px);
+        radial-gradient(var(--bg-main-color) 1.5px, transparent 1.5px),
+        radial-gradient(var(--bg-secondary-color) 1.5px, transparent 1.5px);
     background-size: 20px 20px;
     background-position: 0px 0px, 10px 10px;
-    mask-image: radial-gradient(ellipse at center, rgba(128, 128, 128, 0) 20%, rgba(128, 128, 128, 0.397) 100%);
+    mask-image: radial-gradient(ellipse at center, var(--mask-secondary-color) 20%, var(--mask-main-color) 100%);
     mask-size: 100% 100%;
     mask-repeat: no-repeat;
     z-index: 0;
+}
+
+.todo {
+    z-index: 1;
 }
 
 /* TODO: General items config */
@@ -107,14 +120,14 @@ h3 {
 .todo-main {
     margin: 12px;
     padding: 12px;
-    border: 2px solid whitesmoke;
+    border: 2px solid var(--main-color);
     border-radius: 8px;
-    background-color: rgba(245, 245, 245, 0.589);
+    background-color: var(--alternative-color);
 
 }
 
 .todo > * {
-    border: red 2px solid;
+    border: var(--delete-color) 2px solid;
     min-width: 0;
     min-height: 0;
 }
@@ -229,6 +242,11 @@ h3 {
     flex: 1;
 }
 
+
+.btn-sidebar {
+    flex: 1;
+}
+
 .create-sidebar {
     min-height: 0;
     flex: 1;
@@ -242,36 +260,126 @@ h3 {
     font-family: 'ScienceGothic';
 }
 
+
+/* Main */
+
+.todo-main {
+    max-height: 55vh;
+    display: flex;
+    gap: 12px;
+    flex-direction: column;
+    overflow-y: scroll;
+}
+
+/* Collapsed Items */
+
+.todo-item-col {
+    font-family: 'SpaceGrotesk';
+    display: flex;
+    padding: 12px;
+    background-color: var(--secondary-color);
+    border: none;
+    border-radius: 6px;
+    gap: 60px;
+}
+
+.todo-item-col-info,
+.todo-item-col-act {
+    display: flex;
+    flex: 1;
+    gap: 12px;
+    align-items: center;
+}
+
+.todo-item-col-info {
+    justify-content: flex-start;
+}
+
+.todo-item-col-act {
+    justify-content: flex-end;
+}
+
+.todo-item-col-info > *,
+.todo-item-col-act > * {
+    min-width: 32px;
+    min-height: 16px;
+    align-items: center;
+}
+.btn-col.col-delete {
+    max-width: 6px;
+}
+
+/* .todo-item-col-info .col-name{
+    text-decoration: line-through;
+} */
+
+/* Collapsed Notes */
+
+.notes-col {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.note-item-col {
+    flex: 0.3;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+    padding: 6px;
+    background-color: var(--secondary-color);
+    border-radius: 6px;
+}
+
+.btn-note-item-col {
+    min-width: 16px;
+    min-height: 16px;
+}
+
+/* Modals */
+
+.modals {
+    position: absolute;
+    z-index: 2;
+    background-color: var(--modal-bg-color);
+    margin: 24px;
+    border-radius: 12px;
+    
+}
+
+/* Buttons Style */
+
 .btn-sidebar,
-.btn-project {
+.btn-project,
+.btn-col {
     font-family: 'SpaceGrotesk';
     min-height: 16px;
-    background-color: whitesmoke;
+    background-color: var(--main-color);
     border: none;
     border-radius: 10px;
     box-shadow: 0px 0px 4px black;
     cursor: pointer;
 }
 
-.btn-sidebar {
-    flex: 1;
-}
 
 .btn-project {
     max-height: 16px;
     font-size: 0.7em;
 }
 
-.btn-project-delete {
+.btn-project-delete,
+.btn-col.col-delete {
     flex: 1;
     font-size: 0.7em;
     background-color: transparent;
     border-radius: 2px;
-    color: red;
+    color: var(--delete-color);
     border: none;
-    box-shadow: 0px 0px 4px red;
+    box-shadow: 0px 0px 4px var(--delete-color);
     cursor: pointer;
 }
 
-/* Main */
-
+input[type='checkbox'] {
+    cursor: pointer;
+}

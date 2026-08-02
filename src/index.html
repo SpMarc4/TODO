@@ -28,49 +28,7 @@
                         <button class="btn-project">Project 1</button>
                         <button class="btn-project-delete">X</button>
                     </div>
-                    <div class="project-container">
-                        <button class="btn-project">Project 1</button>
-                        <button class="btn-project-delete">X</button>
-                    </div>
-                    <div class="project-container">
-                        <button class="btn-project">Project 1</button>
-                        <button class="btn-project-delete">X</button>
-                    </div>
-                    <div class="project-container">
-                        <button class="btn-project">Project 1</button>
-                        <button class="btn-project-delete">X</button>
-                    </div>
-                    <div class="project-container">
-                        <button class="btn-project">Project 1</button>
-                        <button class="btn-project-delete">X</button>
-                    </div>
-                    <div class="project-container">
-                        <button class="btn-project">Project 1</button>
-                        <button class="btn-project-delete">X</button>
-                    </div>
-                    <div class="project-container">
-                        <button class="btn-project">Project 1</button>
-                        <button class="btn-project-delete">X</button>
-                    </div>
-                    <div class="project-container">
-                        <button class="btn-project">Project 1</button>
-                        <button class="btn-project-delete">X</button>
-                    </div>
-                    <div class="project-container">
-                        <button class="btn-project">Project 1</button>
-                        <button class="btn-project-delete">X</button>
-                    </div>
-                    <div class="project-container">
-                        <button class="btn-project">Project 1</button>
-                        <button class="btn-project-delete">X</button>
-                    </div>
-                    
-                    <div class="project-container">
-                        <button class="btn-project">Project 1</button>
-                        <button class="btn-project-delete">X</button>
-                    </div>                    
                 </div>
-
             </div>
             <div class="create-sidebar">
                 <button class="btn-sidebar" id="create">Create</button>
@@ -78,22 +36,46 @@
         </div>
         <section class="todo-main">
             <div class="todo-item-col">
-                <div class="todo-item-col info">
-                    <div class="todo-item-col info prior">
-
+                <div class="todo-item-col-info">
+                    <div class="col-prior">
                     </div>
-                    <input type="checkbox" class="todo-item-col info check">
-                    <div class="todo-item-col info name">Todo 1</div>
+                    <input type="checkbox" class="col-check">
+                    <div class="col-name">Todo 1</div>
                 </div>
-                <div class="todo-item-col act">
-                    <div class="todo-item-col act ">
-
+                <div class="todo-item-col-act">
+                    <div class="col-date">
+                        <p id="col-date">Date</p>
                     </div>
+                    <button class="btn-col col-detail">?</button>
+                    <button class="btn-col col-edit">Edit</button>
+                    <button class="btn-col col-delete">X</button>
+                </div>
+            </div>
+            <div class="notes-col" style="display: none">
+                <div class="note-item-col">
+                    <button class="btn-note-item-col">X</button>
+                    <p class="dscr-note-item-col">
+                        Esto es un nota de ejemplo que comprueba
+                        como funcionan las notas
+                    </p>
                 </div>
             </div>
         </section>
         <footer class="todo-footer">Date:</footer>
-    </div>
+
     <div class="todo-background"></div>
+    </div>
+    <div class="modals">
+        <div class="modal-create">
+            <button class="btn-modal">Project</button>
+            <button class="btn-modal">TODO</button>
+            <button class="btn-modal">Note</button>
+        </div>
+        <div class="modal-project-edit"></div>
+        <div class="modal-note-edit"></div>
+        <div class="modal-todo-edit"></div>
+        <div class="modal-todo-info"></div>   
+    </div>
+
 </body>
 </html>
