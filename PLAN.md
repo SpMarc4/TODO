@@ -106,3 +106,11 @@ Flujo:
 
 Almacenamiento:
     - Storer, utilizando el localStore y que se encargue de crear, editar y eliminar elementos.
+
+
+## Pendiente
+
+Modal todo editar
+Modal todo creación
+Modal proyecto editar
+Modal nota editar

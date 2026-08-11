@@ -93,6 +93,7 @@ button:hover {
     opacity: 0.8;
 }
 
+
 /* TODO: Main Container */
 
 .todo,
@@ -374,6 +375,18 @@ div[class^="modal-"] {
     border-radius: 12px;
 }
 
+.btn-modal-close,
+.btn-modal-close-edit {
+    position: absolute;
+    padding: 6px;
+    top: 12px;
+    right: 12px;
+    border: 1px solid var(--bg-secondary-color);
+    border-radius: 6px;
+    background-color: var(--modal-bg-color);
+}
+/* Create */
+
 .modal-create {
     position: relative;
     flex-direction: column;
@@ -392,18 +405,9 @@ div[class^="modal-"] {
     
 }
 
-.btn-modal-close {
-    position: absolute;
-    padding: 6px;
-    top: 12px;
-    right: 12px;
-    border: 1px solid var(--bg-secondary-color);
-    border-radius: 6px;
-    background-color: var(--modal-bg-color);
-}
-
 .modal-create .btn-modal,
-.btn-modal-close {
+.btn-modal-close,
+.btn-modal-close-edit {
     color: var(--main-color);
     font-family: 'SpaceGrotesk';
     font-weight: bold;
@@ -415,11 +419,66 @@ div[class^="modal-"] {
         -1px -1px 0 var(--modal-bg-color);
 }
 
+/* TODO Edit */
+
+textarea {
+    resize: none;
+}
+
+.modal-todo-edit {
+    font-family: 'ScienceGothic';
+    display: flex;
+    flex-direction: column;
+}
+
+.btn-modal-close-edit {
+    position: unset;
+    align-self: flex-end;
+}
+
+.form-todo-edit {
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    display: grid;
+    gap: 24px;
+    grid-template-columns: repeat(2, minmax(100px, 2fr));;
+}
+
+.form-todo-field {
+    flex: 1;
+    gap: 4px;
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    align-items: stretch;
+}
+
+.form-todo-field > input,
+.form-todo-field > textarea,
+.form-todo-field > select {
+    font-family: 'SpaceGrotesk';
+    font-size: 12px;
+    height: 30px;
+    border-radius: 4px;
+    border: 1px solid gray;
+    text-align: start;
+    line-height: 30px;
+}
+
+.btn-modal-add {
+    grid-column: 2;
+    width: 75%;
+    justify-self: center;
+    padding: 12px;
+}
+
 /* Buttons Style */
 
 .btn-sidebar,
 .btn-project,
-.btn-col {
+.btn-col,
+.btn-modal-add {
     font-family: 'SpaceGrotesk';
     min-height: 16px;
     background-color: var(--main-color);

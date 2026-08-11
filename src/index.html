@@ -65,17 +65,42 @@
 
     <div class="todo-background"></div>
     </div>
-    <div class="modals"  style="display: none">
-        <div class="modal-create">
+    <div class="modals">
+        <div class="modal-create" style="display: none">
             <button class="btn-modal">Project</button>
             <button class="btn-modal">TODO</button>
             <button class="btn-modal">Note</button>
             <button class="btn-modal-close">X</button>
         </div>
+        <div class="modal-todo-edit">
+            <button class="btn-modal-close-edit">X</button>
+            <form class="form-todo-edit">
+                <div class="form-todo-field">
+                    <label for="todo-field-name">Name:</label>
+                    <input type="text" id="todo-field-name" placeholder="Write here..." required>
+                </div>
+                <div class="form-todo-field">
+                    <label for="todo-field-description">Description:</label>
+                    <textarea id="todo-field-description" placeholder="Write here..." required></textarea>
+                </div>
+                <div class="form-todo-field">
+                    <label for="todo-field-date">Date:</label>
+                    <input type="date" id="todo-field-date" required>
+                </div>
+                <div class="form-todo-field">
+                    <label for="todo-field-priority">Priority</label>
+                    <select id="todo-field-priority">
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                <button class="btn-modal-add" type="button">Add</button>
+            </form>
+        </div>
+        <div class="modal-todo-info" style="display: none"></div>   
         <div class="modal-project-edit" style="display: none"></div>
-        <div class="modal-note-edit"style="display: none"></div>
-        <div class="modal-todo-edit"style="display: none"></div>
-        <div class="modal-todo-info"style="display: none"></div>   
+        <div class="modal-note-edit" style="display: none"></div>
     </div>
 
 </body>
