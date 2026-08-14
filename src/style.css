@@ -103,6 +103,13 @@ div[class^="modal"] {
     height: 60vh;
 }
 
+.todo,
+.todo-background {
+    min-width: 200px;
+    overflow-x: auto;
+    box-sizing: border-box;
+}
+
 .todo-background {
     position: absolute;
     background-color: var(--main-color);
@@ -133,15 +140,14 @@ div[class^="modal"] {
 .todo-main {
     margin: 12px;
     padding: 12px;
+    box-sizing: border-box;
     border: 2px solid var(--main-color);
     border-radius: 8px;
     background-color: var(--alternative-color);
-
 }
 
 .todo > * {
     border: var(--delete-color) 2px solid;
-    min-width: 0;
     min-height: 0;
 }
 
@@ -174,6 +180,7 @@ div[class^="modal"] {
     ;
     border-radius: 12px;
     box-shadow: 0px 0px 6px 0px;
+    min-width: 0px;
 }
 
 /* Header */
@@ -183,6 +190,7 @@ div[class^="modal"] {
     justify-content: start;
     align-items: center;
     padding: 12px;
+    min-width: 300px;
 }
 
 .todo-header h1 {
@@ -190,6 +198,8 @@ div[class^="modal"] {
     font-family: 'ScienceGothic';
     margin: 0px;
     padding: 0px;
+    font-size: 1em;
+    min-width: 0px;
 }
 
 /* Footer */
@@ -198,16 +208,20 @@ div[class^="modal"] {
     align-items: center;
     justify-content: end;
     padding: 12px;
+    min-width: 300px;
 }
 
 /* Sidebar */
 
 .todo-sidebar {
     min-height: 0;
+    box-sizing: border-box;
     display: flex;
     gap: 24px;
     flex-direction: column;
     text-align: center;
+    min-width: 150px;
+    overflow: hidden;
 }
 
 .menu-sidebar {
@@ -236,7 +250,7 @@ div[class^="modal"] {
     flex-direction: column;
     justify-content: flex-start;
     gap: 8px;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .project-container {
@@ -271,6 +285,7 @@ div[class^="modal"] {
 .projects-sidebar h3 {
     flex: 1;
     font-family: 'ScienceGothic';
+    font-size: 1em;
 }
 
 
@@ -281,7 +296,8 @@ div[class^="modal"] {
     display: flex;
     gap: 12px;
     flex-direction: column;
-    overflow-y: scroll;
+    overflow-x: auto;
+    overflow-y: auto;
 }
 
 /* Collapsed Items */
@@ -289,11 +305,15 @@ div[class^="modal"] {
 .todo-item-col {
     font-family: 'SpaceGrotesk';
     display: flex;
+    overflow: hidden;
+    justify-content: space-around;
     padding: 12px;
     background-color: var(--secondary-color);
     border: none;
     border-radius: 6px;
-    gap: 60px;
+    /* gap: 60px; */
+    min-width: 400px;
+    
 }
 
 .todo-item-col-info,
@@ -361,7 +381,6 @@ div[class^="modal"] {
     background-color: var(--modal-bg-color);
     margin: 24px;
     border-radius: 12px;
-    
 }
 
 div[class^="modal-"] {
@@ -369,14 +388,18 @@ div[class^="modal-"] {
     height: 50%;
     display: flex;
     padding: 12px;
-
     border: 2px solid var(--delete-color);
     background-color: var(--main-color);
     border-radius: 12px;
+    overflow-x: auto;
 }
 
 .btn-modal-close,
-.btn-modal-close-edit {
+.btn-modal-close .edit {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    text-align: center;
     position: absolute;
     padding: 6px;
     top: 12px;
@@ -419,59 +442,112 @@ div[class^="modal-"] {
         -1px -1px 0 var(--modal-bg-color);
 }
 
-/* TODO Edit */
+/* TODO Create/Edit */
 
 textarea {
     resize: none;
 }
 
-.modal-todo-edit {
+.modal-todo {
     font-family: 'ScienceGothic';
     display: flex;
     flex-direction: column;
 }
 
-.btn-modal-close-edit {
+.btn-modal-close.edit {
     position: unset;
     align-self: flex-end;
 }
 
-.form-todo-edit {
+.form-todo,
+.form-project,
+.form-note {
     flex: 1;
+    box-sizing: border-box;
+    padding: 6px;
     justify-content: center;
     align-items: center;
     display: grid;
-    gap: 24px;
-    grid-template-columns: repeat(2, minmax(100px, 2fr));;
+    min-width: 0px;
+    width: 100%;
+    gap: 6px;
 }
 
-.form-todo-field {
-    flex: 1;
+.form-todo {
+
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+
+.form-project,
+.form-note {
+    grid-template-columns: minmax( 100px, 1fr);
+
+}
+
+.form-todo-field,
+.form-project-field,
+.form-note-field {
+    box-sizing: border-box;
     gap: 4px;
     display: flex;
     flex-direction: column;
     justify-content: stretch;
     align-items: stretch;
+    min-width: 0px;
+
 }
 
 .form-todo-field > input,
 .form-todo-field > textarea,
-.form-todo-field > select {
+.form-todo-field > select,
+.form-project-field > input,
+.form-note-field > input,
+.form-note-field > textarea {
     font-family: 'SpaceGrotesk';
     font-size: 12px;
-    height: 30px;
+    height: 20px;
     border-radius: 4px;
     border: 1px solid gray;
     text-align: start;
     line-height: 30px;
 }
 
-.btn-modal-add {
-    grid-column: 2;
+.btn-modal-add{
+    max-width: 100px;
+    grid-column: 1 / -1;
     width: 75%;
     justify-self: center;
     padding: 12px;
 }
+
+/* TODO Info */
+
+.modal-todo.info input,
+.modal-todo.info textarea,
+.modal-todo.info select,
+.modal-todo.info label {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.modal-todo.info .btn-modal-add {
+    display: none;
+}
+
+/* Project edit */
+
+.modal-project-edit,
+.modal-note-edit {
+    flex-direction: column;
+}
+
+.form-note-field > textarea {
+    height: 60px;
+}
+
+/* .form-project {
+    grid-template-columns: 200px;
+} */
 
 /* Buttons Style */
 

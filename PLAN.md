@@ -107,10 +107,146 @@ Flujo:
 Almacenamiento:
     - Storer, utilizando el localStore y que se encargue de crear, editar y eliminar elementos.
 
+## Acciones
+
+Clase TODO:
+    - Propiedades:
+        - ID único: string -> Lo gestiona el browser.
+        - Finalizado: booleano -> No se introduce por el usuario, viene false por default
+        - Nombre: string
+        - Descripción ? opcional: string
+        - Fecha: datetime
+        - Prioridad: string -> low | medium | high
+        - Proyecto al que pertenece (Id): string -> Lo gestiona el browser
+
+    -Método:
+        - setter config
+        - getter config
+        - generador de id -> Quizás se debe extraer como método genérico
+
+Clase Project
+    - Propiedades:
+        - ID único: string -> Lo genera el browser.
+        - Nombre: string
+        - Descripción ? opcional: string
+        - Fecha: datetime
+
+    -Método:
+        - setter config
+        - getter config
+        - generador de id -> Quizás se debe extraer como método genérico
+
+Clase Notes
+    - Propiedades:
+        - ID único: string -> Lo genera el browser.
+        - Nombre: string
+        - Descripción: string
+
+    -Método:
+        - setter config
+        - getter config
+        - generador de id -> Quizás se debe extraer como método genérico
+
+
+Clase Storer
+    - Propiedades:
+        - Listado TODO's: Array<string> (id)
+        - Listado Projects: Array<string> (id)
+        - Listado Notes: Array<string> (id)
+        - Current Tab: <'Project Id'> Si estás en la pestaña de un  proyecto, <'Nombre del Tab'> si no lo estás
+
+    - Métodos:
+        - getter & setter TODO's
+        - getter & setter Projects
+        - getter & setter Notes
+
+Clase Utils
+    - Propiedades:
+        - ...
+    
+    - Métodos:
+        - Generador de ID's
+        - Obtener ID's elementos clicados
+        - Obtener clase elementos clicados
+
+
+Clase Manager
+    - Propiedades:
+        - ...
+    
+    - Métodos:
+        - TODO Creator: Crea objeto TODO y lo añade al Storer
+        - Project Creator: Crea objeto Project y lo añade al Storer
+        - Note Creator: Crea objeto Note y lo añade al Storer
+        - TODO Deleter: Elimina objeto TODO del Storer
+        - Project Deleter: Elimina objeto TODO del Storer
+        - Note Creator: Elimina objeto Note del Storer
+        - Creator: Le pasas como parámetro el ID y si es project, note o todo y lo crea.
+        - Deleter:Le pasas como parámetro el ID y si es project, note o todo y lo elimina.
+
+Clase DOM Render
+    - Propiedades:
+        - ...
+    
+    - Métodos
+        - renderHeader
+        - renderSidebar
+        - renderMain(idTab)
+        - renderFooter
+        - createProjectSidebar(id, name) -> Datos necesario para renderizar en Main
+        - createTodo(id, name, state, date,) -> Datos necesario para renderizar en Main
+        - createNote(id, name, description) -> Datos necesario para renderizar en Main
+        - renderTodos -> Coge los elementos del storer, los crea y los añade a Main
+        - renderProjects -> Coge los elementos del storer, los crea y los añade a Main
+        - renderNotes -> Coge los elementos del storer, los crea y los añade a Main
+        - renderModalTodoEdit
+        - renderModalTodoInfo
+        - renderModalProjectEdit
+        - renderModalNoteEdit
+        - renderModal(artifact, type)
+        - render(element, idTab? ,artifact?, type?)
+
+element: header | sidebar | main | footer | modal
+idTab: <id>
+artifact: todo | project | note
+modal: create | todo | todo-info | project | note
+
+Clase Emitter -> Se añadirá un event listener al crear cada botón, a ese evento se le adjundar un send(message) dónde message: { command, data }
+    - Propiedades:
+        - ...
+    
+    - send: Evía mensajes con datos
+        - { command: init }
+        - { command: switch-tab, data: { tab-id } }
+        - { command: create-artifact, data: { artifact-name } }
+        
+        - { command: create-todo }
+        - { 
+            command: accept-todo,
+            data: { id, name, description?, date, priority, finalized }
+        }
+        - { command: edit-todo, data: { id } }
+        - { command: delete-todo, data: { id } }
+        - { command: info-todo, data: { id } }
+        
+        - { command: create-project }
+        - { command: accept-project, data: { id, name, description? } }
+        - { command: delete-project, data: { id } }
+        
+        - { command: create-note }
+        - { command: accept-note, data: { id, name, description? } }
+        - { command: delete-note, data: { id } }
 
 ## Pendiente
 
-Modal todo editar
-Modal todo creación
-Modal proyecto editar
-Modal nota editar
+Clase Listener/Orquestator
+
+    - Propiedades:
+        - ...
+
+    - Métodos:
+        - execute(message):
+            - init: render('init')  
+            - switch-tab: render('main', tab-id)
+            - create-artifact: render('modal')
+
