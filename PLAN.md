@@ -159,6 +159,7 @@ Clase Storer
         - getter & setter TODO's
         - getter & setter Projects
         - getter & setter Notes
+        - getter & setter ID current tab
 
 Clase Utils
     - Propiedades:
@@ -175,14 +176,14 @@ Clase Manager
         - ...
     
     - Métodos:
-        - TODO Creator: Crea objeto TODO y lo añade al Storer
-        - Project Creator: Crea objeto Project y lo añade al Storer
-        - Note Creator: Crea objeto Note y lo añade al Storer
-        - TODO Deleter: Elimina objeto TODO del Storer
-        - Project Deleter: Elimina objeto TODO del Storer
-        - Note Creator: Elimina objeto Note del Storer
+        - TODO Creator: Genera ID, Crea objeto TODO y lo añade al Storer
+        - Project Creator: Genera ID,Crea objeto Project y lo añade al Storer
+        - Note Creator: Genera ID,Crea objeto Note y lo añade al Storer
+        - TODO Deleter: Obtiene ID, Elimina objeto TODO del Storer
+        - Project Deleter: Obtiene ID, Elimina objeto TODO del Storer
+        - Note Creator: Obtiene ID, Elimina objeto Note del Storer
         - Creator: Le pasas como parámetro el ID y si es project, note o todo y lo crea.
-        - Deleter:Le pasas como parámetro el ID y si es project, note o todo y lo elimina.
+        - Deleter: Le pasas como parámetro el ID y si es project, note o todo y lo elimina.
 
 Clase DOM Render
     - Propiedades:
@@ -204,12 +205,15 @@ Clase DOM Render
         - renderModalProjectEdit
         - renderModalNoteEdit
         - renderModal(artifact, type)
-        - render(element, idTab? ,artifact?, type?)
+
+
+        - render(element, idTab? ,artifact?, type?, idArtifact?)
 
 element: header | sidebar | main | footer | modal
 idTab: <id>
 artifact: todo | project | note
 modal: create | todo | todo-info | project | note
+idArtifact: <id>
 
 Clase Emitter -> Se añadirá un event listener al crear cada botón, a ese evento se le adjundar un send(message) dónde message: { command, data }
     - Propiedades:
@@ -236,6 +240,9 @@ Clase Emitter -> Se añadirá un event listener al crear cada botón, a ese even
         - { command: create-note }
         - { command: accept-note, data: { id, name, description? } }
         - { command: delete-note, data: { id } }
+        
+        - { command: close-modal, data: { id } }
+
 
 ## Pendiente
 
@@ -246,7 +253,71 @@ Clase Listener/Orquestator
 
     - Métodos:
         - execute(message):
-            - init: render('init')  
-            - switch-tab: render('main', tab-id)
-            - create-artifact: render('modal')
+            - init:
+                - render('init')
+                - setter IDCurrentTab
 
+            - switch-tab:
+                - utils.getTabID
+                - setter IDCurrentTab
+                - render('main', tab-id)
+
+            - create-artifact:
+                - render('modal', '', '', 'create')
+
+            - create-todo:
+                - render('modal', '', 'todo', 'todo')
+
+            - accept-todo:
+                - creator('todo', <id>, data= {
+                            id, name, description?, date, priority, finalized
+                        }
+                    )
+                - close-modal
+
+            - edit-todo:
+                - render('modal', '', 'todo', 'todo')
+
+            - delete-todo:
+                - deleter('todo', <id>)
+                - utils.getTabID
+                - render('main', <current-tab>)
+
+            - info-todo:
+                - render('modal', <id>, 'todo', 'todo-info')
+
+            - create-project:
+                - render('modal', '', 'project', 'project')
+
+            - accept-project:
+
+                - creator('project', <id>, data= {
+                            id, name, description?
+                        }
+                    )
+                - utils.getTabID
+                - render('main', <current-tab>)
+
+            - delete-project:
+                - deleter('project', <id>)
+                - utils.getTabID
+                - render('main', <current-tab>)
+
+            - create-note:
+                - render('modal', '', 'note', 'note')
+                
+            - accept-note:
+                - creator('note', <id>, data= {
+                            id, name, description?
+                        }
+                    )
+                - utils.getTabID
+                - render('main', <current-tab>)
+
+            - delete-note:
+                - deleter('note', <id>)
+                - utils.getTabID
+                - render('main', <current-tab>)
+
+            - close-modal:
+                - render('main', <current-tab>)
