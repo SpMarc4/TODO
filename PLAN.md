@@ -159,16 +159,17 @@ Clase Storer
         - getter & setter TODO's
         - getter & setter Projects
         - getter & setter Notes
-        - getter & setter ID current tab
+        - getter & setter class current tab -> Clase
 
 Clase Utils
     - Propiedades:
         - ...
     
     - Métodos:
-        - Generador de ID's
-        - Obtener ID's elementos clicados
-        - Obtener clase elementos clicados
+        - generateID: Generador de ID's
+        - getID: Obtener ID's elementos clicados
+        - getClass: Obtener clase elementos clicados
+        - getFormInfo
 
 
 Clase Manager
@@ -182,7 +183,9 @@ Clase Manager
         - TODO Deleter: Obtiene ID, Elimina objeto TODO del Storer
         - Project Deleter: Obtiene ID, Elimina objeto TODO del Storer
         - Note Creator: Obtiene ID, Elimina objeto Note del Storer
-        - Creator: Le pasas como parámetro el ID y si es project, note o todo y lo crea.
+        - TODO Editor: Obtiene ID, modifica el estado
+
+        - Editor: Le pasas como parámetro el ID y si es project, note o todo, si existe lo edita si no lo crea.
         - Deleter: Le pasas como parámetro el ID y si es project, note o todo y lo elimina.
 
 Clase DOM Render
@@ -190,58 +193,123 @@ Clase DOM Render
         - ...
     
     - Métodos
+
+        - createProjectSidebar(id, name) -> Datos necesario para renderizar en Main
+        - createTodo(id, name, state, date,) -> Datos necesario para renderizar en Main
+        - createNote(id, name, description) -> Datos necesario para renderizar en Main
+
         - renderHeader
         - renderSidebar
         - renderMain(idTab)
         - renderFooter
-        - createProjectSidebar(id, name) -> Datos necesario para renderizar en Main
-        - createTodo(id, name, state, date,) -> Datos necesario para renderizar en Main
-        - createNote(id, name, description) -> Datos necesario para renderizar en Main
-        - renderTodos -> Coge los elementos del storer, los crea y los añade a Main
-        - renderProjects -> Coge los elementos del storer, los crea y los añade a Main
-        - renderNotes -> Coge los elementos del storer, los crea y los añade a Main
+
+        - renderLayout()
+
         - renderModalTodoEdit
         - renderModalTodoInfo
         - renderModalProjectEdit
         - renderModalNoteEdit
-        - renderModal(artifact, type)
 
+        - renderTodos -> Coge los elementos del storer, los crea y los añade a Main
+        - renderTodosToday ->
+        - renderTodosWeek ->
+        - renderProjects(id) -> Coge los elementos del storer, los crea y los añade a Main
+        - renderNotes -> Coge los elementos del storer, los crea y los añade a Main
 
-        - render(element, idTab? ,artifact?, type?, idArtifact?)
+        - render(element) -> Tiene un modo de renderización por clase para todas las vista y otro para proyectos por id
 
-element: header | sidebar | main | footer | modal
-idTab: <id>
-artifact: todo | project | note
-modal: create | todo | todo-info | project | note
-idArtifact: <id>
+element: {
+    item: 
+        | artifact:
+            name: todo | project | note,
+        | view: 
+            | layout: 'header' | 'sidebar' | 'main' | 'footer' | 'modal',
+            | modal: 'create' | 'todo'| 'todo-info' | 'project' | 'note',
+    
+    id: <idArtifact> | <classView> | projectView,
+
+    todo-info?: { name, description, date, priority }
+
+}
+
+currentTab -> <classView>: clase TODO | clase TODAY | clase WEEK | <ProjectID>
+
+ID único: string -> Lo gestiona el browser.
+        - Finalizado: booleano -> No se introduce por el usuario, viene false por default
+        - Nombre: string
+        - Descripción ? opcional: string
+        - Fecha: datetime
+        - Prioridad: string -> low | medium | high
+        - Proyecto al que pertenece (Id): string -> Lo gestiona el browser
 
 Clase Emitter -> Se añadirá un event listener al crear cada botón, a ese evento se le adjundar un send(message) dónde message: { command, data }
     - Propiedades:
         - ...
     
-    - send: Evía mensajes con datos
-        - { command: init }
-        - { command: switch-tab, data: { tab-id } }
-        - { command: create-artifact, data: { artifact-name } }
-        
-        - { command: create-todo }
-        - { 
-            command: accept-todo,
-            data: { id, name, description?, date, priority, finalized }
+    - send: Envía mensajes con datos
+        - sendInit: {
+            { command: 'init' }
+            
         }
-        - { command: edit-todo, data: { id } }
-        - { command: delete-todo, data: { id } }
-        - { command: info-todo, data: { id } }
+        - sendSwitchTab: {
+            getClass
+            if project
+            getID
+            id: class | { project: id }
+            { command: 'switch-tab', element: { item:view:layout: 'main' }, id }
+        }
+        - sendCreateArtifact: { command: 'create-artifact', { element: { item:view:modal: 'create', id: <idTab> }} }
         
-        - { command: create-project }
-        - { command: accept-project, data: { id, name, description? } }
-        - { command: delete-project, data: { id } }
+        - sendCreateTodo: { command: 'create-todo', element: { item:view:modal: 'todo', id: <idTab> } }
+        - sendAcceptTodo: { 
+            command: 'accept-todo',
+            data: { name, description?, date, priority },
+            element: { item:view:layout: 'main', id: <idTab> }
+        }
+        - sendEditTodo: { command: 'edit-todo', element: { item:view:modal:'todo', id: <idTab> } }
+        - sendFinalizeTODO: { command: 'finalize-todo', { 
+            data: { id: <idArtifact> },
+            element: { item:view:layout:'main', id: <idTab> }
+         }}
+        - sendDeleteTodo: { command: delete-todo, 
+            data: { id: <idArtifact> },
+            element: { item:view:layout:'main', id: <idTab> }
+        }
+        - sendInfoTodo: { command: info-todo,
+            data: { id: <idArtifact> } },
+            element: { item:view:modal:'todo-info', id: <idTab>, todo-info: { name, description, date, priority }
+        }
         
-        - { command: create-note }
-        - { command: accept-note, data: { id, name, description? } }
-        - { command: delete-note, data: { id } }
+        - sendChangeTodo: { command: change-todo-state,
+            data: { id },
+            element: { item:view:layout:'main', id: <idTab> }
         
-        - { command: close-modal, data: { id } }
+        }
+        
+        - sendCreateProject: { command: create-project, element: { item:view:modal: 'project', id: <idTab> }}
+        - sendAcceptProject: { command: accept-project,
+            data: { name, description? }
+            element: { item:view:layout: 'main, id: <idTab> }
+        }
+        - sendDeleteProject: { command: delete-project,
+            data: { id: <idArtifact> },
+            element: { item:view:layout:'main', id: <idTab> }
+        }
+        
+        - sendCreateNote: { command: create-note, element: { item:view:modal: 'note', id: <idTab>  }}
+        - sendAcceptNote: { command: accept-note,
+            data: { name, description? }
+            element: { item:view:layout:'main', id: <idTab> }
+        }
+
+        - sendDeleteNote: { command: delete-note,
+            data: { id },
+            element: { item:view:layout:'main', id: <idTab> }
+        }
+        
+        - sendCloseModal: { command: close-modal,
+            element: { item:view:layout:'main', id: <idTab> }
+        }
 
 
 ## Pendiente
@@ -254,70 +322,76 @@ Clase Listener/Orquestator
     - Métodos:
         - execute(message):
             - init:
-                - render('init')
-                - setter IDCurrentTab
+                - setter IDCurrentTab -> clase TODO
+                - renderLayout()
 
             - switch-tab:
-                - utils.getTabID
-                - setter IDCurrentTab
-                - render('main', tab-id)
+                - setter ClassCurrentTab
+                - render(element: { item.view.layout, id: <idTab> })
 
             - create-artifact:
-                - render('modal', '', '', 'create')
+                - render(element.item.view.modal, element.id)
 
             - create-todo:
-                - render('modal', '', 'todo', 'todo')
+                - render(element.item.view.modal, element.id)
 
             - accept-todo:
-                - creator('todo', <id>, data= {
+                - generateID
+                - editor('todo', <id>, data= {
                             id, name, description?, date, priority, finalized
                         }
                     )
-                - close-modal
+                - render(element.item.view.layout, element.id)
 
             - edit-todo:
-                - render('modal', '', 'todo', 'todo')
+                - render(element.item.view.modal, element.id, todo-info)
+
+            - finalize-todo:
+                - getter Storer Todo
+                - setter Storer
+                - render(element.item.view.layout, element.id)
 
             - delete-todo:
                 - deleter('todo', <id>)
-                - utils.getTabID
-                - render('main', <current-tab>)
+                - render(element.item.view.layout, element.id)
 
             - info-todo:
-                - render('modal', <id>, 'todo', 'todo-info')
+                - render(element.item.view.layout, element.id, todo-info)
+
+            - change-todo:
+                - getter Storer Todo
+                - setter Storer
+                - render(element.item.view.layout, element.id)
 
             - create-project:
-                - render('modal', '', 'project', 'project')
+                - render(element.item.view.layout, element.id)
 
             - accept-project:
-
-                - creator('project', <id>, data= {
+                - generateID
+                - editor('project', <id>, data= {
                             id, name, description?
                         }
                     )
-                - utils.getTabID
                 - render('main', <current-tab>)
 
             - delete-project:
                 - deleter('project', <id>)
-                - utils.getTabID
                 - render('main', <current-tab>)
 
             - create-note:
-                - render('modal', '', 'note', 'note')
+                - render(element.item.view.layout, element.id)
                 
             - accept-note:
+                - generateID
                 - creator('note', <id>, data= {
                             id, name, description?
                         }
                     )
-                - utils.getTabID
-                - render('main', <current-tab>)
+                - render(element.item.view.layout, element.id)
 
             - delete-note:
                 - deleter('note', <id>)
-                - utils.getTabID
-                - render('main', <current-tab>)
+                - render(element.item.view.layout, element.id)
 
             - close-modal:
-                - render('main', <current-tab>)
+                - render(element.item.view.layout, element.id)
