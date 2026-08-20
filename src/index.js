@@ -24,9 +24,9 @@ class Project {
 
 }
 
-class Notes {
+class Note {
 
-    constructor(id, name, description, date, priority) {
+    constructor(id, name, description) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -36,9 +36,9 @@ class Notes {
 
 class Storer {
 
-    currentTab
+    static currentTab
 
-    mapper = {
+    static mapper = {
         'todo': 'todos',
         'project': 'projects',
         'note': 'notes',
@@ -46,23 +46,64 @@ class Storer {
     };
 
     get currentTab() {
-        return this.currentTab;
+        return Storer.currentTab;
     }
 
     set currentTab(tab) {
-        this.currentTab.push(tab);
+        Storer.currentTab.push(tab);
     }
 
     static #updatedList(itemType, item) {
-        const itemStorage = this.mapper[itemType];
+        const itemStorage = Storer.mapper[itemType];
         const listObj = JSON.parse(localStorage.getItem(itemStorage));
         listObj.push(item);
         return JSON.stringify(listObj);
     }
     
+    static #itemChecker(itemType) {
+        if (!Storer.mapper.hasOwnProperty(itemType)) {
+            throw new Error(`[Storer]: Item incorrecto. Seleccione uno entre: todo, project o note.`)
+        }
+    }
+
+    static #typeItemChecker(itemType, item) {
+        if (itemType === 'todo') {
+            if (item instanceof TODO) {
+                return
+            }
+            
+            else {
+                throw new Error(`[Storer]: Clase del item incorrecta. Asegúrese que sea un TODO`)
+            }
+        }
+
+        else if (itemType === 'project') {
+            if (item instanceof Project) {
+                return
+            }
+            
+            else {
+                throw new Error(`[Storer]: Clase del item incorrecta. Asegúrese que sea un Project`)
+            }
+        }
+
+        if (itemType === 'note') {
+            if (item instanceof Note) {
+                return
+            }
+            
+            else {
+                throw new Error(`[Storer]: Clase del item incorrecta. Asegúrese que sea una Note`)
+            }
+        }
+    }
+
     static saveItem(itemType, item) {
 
-        const itemStorage = this.mapper[itemType];
+        Storer.#itemChecker(itemType);
+        Storer.#typeItemChecker(itemType, item);
+
+        const itemStorage = Storer.mapper[itemType];
 
         if (!localStorage.getItem(itemStorage)) {
             localStorage.setItem(itemStorage, JSON.stringify([]));
@@ -79,28 +120,37 @@ class Storer {
         }
     }
     
-    static getItem(itemType, id) {
+    static getItem(itemType, itemId) {
+        
+        Storer.#itemChecker(itemType);
 
         try {
-            const itemStorage = this.mapper[itemType];
+            const itemStorage = Storer.mapper[itemType];
 
             const listObj = JSON.parse(localStorage.getItem(itemStorage));
             const filteredList = listObj.filter( t => t.id === itemId );
 
-            console.log(`[Storer]: ${itemType} ${id} obtenido correctamente.`);
+            if (filteredList.length < 1) {
+                console.log(`[Storer]: Id no encontrado ${itemId}. Asegurese del formato.`)
+                return
+            }
+
+            console.log(`[Storer]: ${itemType} ${itemId} obtenido correctamente.`);
             return filteredList[0];
         }
 
         catch {
-            console.error(`[Storer]: No se ha podido obtener el ${itemType} ${id}.`);
+            console.error(`[Storer]: No se ha podido obtener el ${itemType} ${itemId}.`);
         }
 
     }
 
-    static deleteItem(itemType, id) {
+    static deleteItem(itemType, itemId) {
+
+        Storer.#itemChecker(itemType);
 
         try {
-            const itemStorage = this.mapper[itemType];
+            const itemStorage = Storer.mapper[itemType];
 
             const listObj = JSON.parse(localStorage.getItem(itemStorage));
             const filteredList = JSON.stringify(
@@ -109,19 +159,31 @@ class Storer {
                 )
             );
 
+            const itemsFound = listObj.filter(
+                t => t.id === itemId
+            )
+
+            if (itemsFound.length < 1) {
+                console.log(`[Storer]: Id no encontrado ${itemId}. Asegurese del formato.`)
+                return
+            }
+
             localStorage.setItem(itemStorage, filteredList);
         
-            console.log(`[Storer]: ${itemType} ${id} eliminado correctamente.`);
+            console.log(`[Storer]: ${itemType} ${itemId} eliminado correctamente.`);
         }
 
         catch {
-            console.error(`[Storer]: No se ha podido eliminar el ${itemType} ${id}.`);
+            console.error(`[Storer]: No se ha podido eliminar el ${itemType} ${itemId}.`);
         }
 
     }
 
     static getItems(itemType) {
-        const itemStorage = this.mapper[itemType];
+
+        Storer.#itemChecker(itemType);
+
+        const itemStorage = Storer.mapper[itemType];
 
         try {
             console.log(`[Storer]: ${itemStorage} obtenidos correctamente.`);
