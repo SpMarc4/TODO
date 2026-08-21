@@ -129,7 +129,6 @@ Clase Project
         - ID único: string -> Lo genera el browser.
         - Nombre: string
         - Descripción ? opcional: string
-        - Fecha: datetime
 
     -Método:
         - setter config
@@ -177,9 +176,9 @@ Clase Manager
         - ...
     
     - Métodos:
-        - TODO Creator: Genera ID, Crea objeto TODO y lo añade al Storer
-        - Project Creator: Genera ID,Crea objeto Project y lo añade al Storer
-        - Note Creator: Genera ID,Crea objeto Note y lo añade al Storer
+        - TODO Creator: Crea objeto TODO y lo añade al Storer
+        - Project Creator: Crea objeto Project y lo añade al Storer
+        - Note Creator: Crea objeto Note y lo añade al Storer
         - TODO Deleter: Obtiene ID, Elimina objeto TODO del Storer
         - Project Deleter: Obtiene ID, Elimina objeto TODO del Storer
         - Note Creator: Obtiene ID, Elimina objeto Note del Storer

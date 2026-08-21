@@ -65,17 +65,17 @@
 
     <div class="todo-background"></div>
     </div>
-    <div class="modals" style="display: none">
+    <div class="modals">
         <div class="modal-create" style="display: none">
             <button class="btn-modal">Project</button>
             <button class="btn-modal">TODO</button>
             <button class="btn-modal">Note</button>
             <button class="btn-modal-close">X</button>
         </div>
-        <div class="modal-todo edit" style="display: none">
+        <div class="modal-todo edit">
             <button class="btn-modal-close edit">X</button>
             <form class="form-todo">
-                <div class="form-todo-field" style="display: none">
+                <div class="form-todo-field">
                     <label for="todo-field-name">TODO Name:</label>
                     <input type="text" id="todo-field-name" placeholder="Write here..." required>
                 </div>
@@ -95,7 +95,7 @@
                         <option value="high">High</option>
                     </select>
                 </div>
-                <button class="btn-modal-add" type="button">Accept Changes</button>
+                <button class="btn-modal-add" type="submit">Accept Changes</button>
             </form>
         </div>
         <div class="modal-project-edit" style="display: none">
@@ -105,10 +105,10 @@
                     <label for="project-field-name">Project name:</label>
                     <input type="text" id="project-field-name" placeholder="Write here..." required>
                 </div>
-                <button class="btn-modal-add" type="button">Accept Changes</button>
+                <button class="btn-modal-add" type="submit">Accept Changes</button>
             </form>
         </div>
-        <div class="modal-note-edit">
+        <div class="modal-note-edit" style="display: none">
             <button class="btn-modal-close edit">X</button>
             <form class="form-note">
                 <div class="form-note-field">
@@ -116,10 +116,10 @@
                     <input type="text" id="note-field-name" placeholder="Write here..." required>
                 </div>
                 <div class="form-note-field">
-                    <label for="note-field-text">Description</label>
-                    <textarea id="note-field-text" placeholder="Write here..."></textarea>
+                    <label for="note-field-description">Description</label>
+                    <textarea id="note-field-description" placeholder="Write here..."></textarea>
                 </div>
-                <button class="btn-modal-add" type="button">Accept Changes</button>
+                <button class="btn-modal-add" type="submit">Accept Changes</button>
             </form>
         </div>
     </div>

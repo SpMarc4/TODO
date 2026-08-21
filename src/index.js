@@ -1,9 +1,12 @@
 import "./style.css";
 
+const form = document.querySelector('form');
+const btnModal = document.querySelector('.btn-modal-add');
+
 class TODO {
 
-    constructor(id, name, description, date, priority) {
-        this.id = id;
+    constructor(name, description, date, priority) {
+        this.id = Utils.generateID();
         this.finalized = false;
         this.name = name;
         this.description = description;
@@ -15,19 +18,18 @@ class TODO {
 
 class Project {
 
-    constructor(id, name, description, date) {
-        this.id = id;
+    constructor(name, description) {
+        this.id = Utils.generateID();
         this.name = name;
         this.description = description;
-        this.date = date;
     }
 
 }
 
 class Note {
 
-    constructor(id, name, description) {
-        this.id = id;
+    constructor(name, description) {
+        this.id = Utils.generateID();
         this.name = name;
         this.description = description;
     }
@@ -196,3 +198,109 @@ class Storer {
 
     }
 }
+
+class Utils {
+
+    static generateID() {
+        return crypto.randomUUID()
+    }
+
+    static getID(element) {
+        return element.target.id;
+    }
+    
+    static getClass(element) {
+        return element.target.className;
+    }
+
+    static getFormInfo(event, elements) {
+        try {
+            event.preventDefault();
+            let config = {};
+            for(const element of elements) {
+                const idElem = element.id;
+                const valueElem = element.value;
+                config[idElem] = valueElem;
+            }
+            console.log(`[Utils] Configuración obtenida correctamente:\n${config}`);
+            return config;
+        }
+
+        catch {
+            console.error(`[Utils] No se ha podido obtener la configuración`)
+        }
+    }
+
+    static dataFormatter(data) {
+        try {
+            for ( const key of Object.keys(data)) {
+                const cleanKey = key.split('-').at(-1);
+                data[cleanKey] = data[key];
+                delete data[key]
+            }
+            return data
+            console.log(`[Utils] Formateo de los datos correcto`)
+        }
+
+        catch {
+            console.Error(`[Utils] No se han podido formatear los datos correctamente.`)
+            
+        }
+    }
+}
+
+class Manager {
+
+    static #todoCreator(data) {
+
+        const todo = new TODO(
+            data.name,
+            data.description,
+            data.date,
+            data.priority
+        )
+
+        Storer.saveItem('todo', todo)
+    }
+
+    static #projectCreator(data) {
+        const project = new Project(
+            data.name,
+            data.description,
+        )
+
+        Storer.saveItem('project', project)
+    }
+
+    static #noteCreator(data) {
+        const note = new Note(
+            data.name,
+            data.description,
+        )
+
+        Storer.saveItem('note', note)
+    }
+
+    static creator(itemType, data) {
+        const cleanData = Utils.dataFormatter(data)
+        console.log(cleanData)
+        switch (itemType) {
+            case 'todo':
+                Manager.#todoCreator(cleanData);
+            case 'project':
+                Manager.#projectCreator(cleanData);
+            case 'note':
+                Manager.#noteCreator(cleanData);
+        }
+    }
+
+    static deleter(itemType, itemId) {
+        Storer.deleteItem(itemType, itemId)
+    }
+}
+
+// form.addEventListener('submit', function (event) {
+//         return Utils.getFormInfo(event, this.elements)
+//     }
+    
+// )
