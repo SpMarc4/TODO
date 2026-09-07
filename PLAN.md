@@ -193,10 +193,6 @@ Clase DOM Render
     
     - Métodos
 
-        - createProjectSidebar(id, name) -> Datos necesario para renderizar en Main
-        - createTodo(id, name, state, date,) -> Datos necesario para renderizar en Main
-        - createNote(id, name, description) -> Datos necesario para renderizar en Main
-
         - renderHeader
         - renderSidebar
         - renderMain(idTab)
@@ -204,10 +200,13 @@ Clase DOM Render
 
         - renderLayout()
 
+        - renderModalCreate
         - renderModalTodoEdit
         - renderModalTodoInfo
         - renderModalProjectEdit
         - renderModalNoteEdit
+
+        - renderModalClose
 
         - renderTodos -> Coge los elementos del storer, los crea y los añade a Main
         - renderTodosToday ->
@@ -216,6 +215,71 @@ Clase DOM Render
         - renderNotes -> Coge los elementos del storer, los crea y los añade a Main
 
         - render(element) -> Tiene un modo de renderización por clase para todas las vista y otro para proyectos por id
+
+    // Cuando se renderiza?
+        - Inicialización plataforma
+            - X renderHeader
+            - X renderSidebar
+            - render ProjectSidebar - DONE
+            - renderMain('todos')
+            - X renderFooter
+            - Almacena currentTab (lo hace otro clase/módulo)
+        
+        - Click TODOS
+            - Almacena currentTab (lo hace otro clase/módulo)
+            - renderMain('todos')
+                - renderTodos
+        - Click Today
+            - Almacena currentTab (lo hace otro clase/módulo)
+            - renderMain('todos-today')
+                - renderTodosToday
+        - Click Week
+            - Almacena currentTab (lo hace otro clase/módulo)
+            - renderMain('todos-week')
+                - renderTodosWeek
+        - Click Notes
+            - Almacena currentTab (lo hace otro clase/módulo)
+            - renderMain('notes')
+                - renderNotes
+        - Click Project
+            - Almacena currentTab (lo hace otro clase/módulo)
+            - renderMain('todos')
+                - renderTodosProject(id)
+
+        - Click Create
+            - renderModalCreate
+        - Click Create -> Todo
+            - renderModalTodoEdit
+        - Click Create -> Project
+            - renderModalProjectEdit
+        - Click Create -> Note
+            - renderModalNotetEdit
+        - Click Create -> Close
+            - renderMain(currenTab)
+        - Click Accept Changes (TODO, Note)
+            - genera TODO o Note (lo hace otro clase/módulo)
+            - renderMain(currenTab)
+        - Click Accept Changes (Project)
+            - genera Project (lo hace otro clase/módulo)
+            - renderMain(currenTab)
+            - ProjectSidebar
+        - Click cross sidebarProject
+            - Si el proyecto es currentTab se queda Main vacío
+            - Elimina Project (lo hace otro clase/módulo)
+            - ProjectSidebar
+        - Click check TODO
+            - Modifica priority TODO  (lo hace otro clase/módulo)
+            - No se renderiza nada pero habrá que aplicar una acción al todo
+        - Click info TODO
+            - renderModalTodoInfo
+        - Click Edit TODO
+            - renderModalTodoEdit
+        - Click cross TODO
+            - Elimina el TODO (lo hace otro clase/módulo)
+            - renderMain(currenTab)
+        - Click cross Note
+            - Elimina Note (lo hace otro clase/módulo)
+            - renderMain(currenTab)
 
 element: {
     item: 
