@@ -228,7 +228,7 @@ Clase DOM Render
         - Click TODOS
             - Almacena currentTab (lo hace otro clase/módulo)
             - renderMain('todos')
-                - renderTodos
+                - renderTodos - DONE
         - Click Today
             - Almacena currentTab (lo hace otro clase/módulo)
             - renderMain('todos-today')

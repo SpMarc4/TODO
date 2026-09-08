@@ -3,7 +3,7 @@ import "./style.css";
 const form = document.querySelector('form');
 const btnModal = document.querySelector('.btn-modal-add');
 
-class TODO {
+export class TODO {
 
     constructor(name, description, date, priority, project = null) {
         this.id = Utils.generateID();
@@ -17,7 +17,7 @@ class TODO {
 
 }
 
-class Project {
+export class Project {
 
     constructor(name, description) {
         this.id = Utils.generateID();
@@ -27,7 +27,7 @@ class Project {
 
 }
 
-class Note {
+export class Note {
 
     constructor(name, description) {
         this.id = Utils.generateID();
@@ -37,7 +37,7 @@ class Note {
 
 }
 
-class Storer {
+export class Storer {
 
     static currentTabStore = '';
 
@@ -200,7 +200,7 @@ class Storer {
     }
 }
 
-class Utils {
+export class Utils {
 
     static generateID() {
         return crypto.randomUUID()
@@ -250,7 +250,7 @@ class Utils {
     }
 }
 
-class Manager {
+export class Manager {
 
     static #todoCreator(data) {
 
@@ -263,6 +263,48 @@ class Manager {
 
         Storer.saveItem('todo', todo)
     }
+
+    static todoDateFilter(data, type) {
+
+        switch (type) {
+            case 'today': {
+                return data.filter(
+                    todo => Date.parse(todo.date) === Date.now()
+                ) 
+            }
+
+            case 'week': {
+                const currentDate = new Date();
+                const currentDateString = currentDate.toString();
+                const currentWeek = Manager.#getweek(currentDateString);
+                const currentYear = currentDate.getFullYear();
+
+                const newDate = date.setDate(date.getDate()+ 7);
+                console.log(newDate)
+                return data.filter(
+                    function(todo) {
+                        const todoDate = todo.date;
+                        const todoDateFormated = new Date(todo.date);
+                        const todoWeek = Manager.#getweek(todoDate);
+                        const todoYear = todoDateFormated.getFullYear();
+                        return (currentWeek === todoWeek) && (currentYear === todoYear)
+                    }
+                ) 
+            }
+        }
+
+    }
+
+    static #getweek(date) {
+        const dateFormat = new Date(date)
+        const firstYearDate = new Date(dt.getFullYear(), 0, 1);
+        const daysPassed = Math.floor((dateFormat - firstYearDate)/(1000 * 0 * 60 * 24));
+        const weekDay = dateFormat.getDate();
+        const weekDayFormated = (weekDay === 0) ? 6: weekDay - 1;
+
+        const week = Math.floor((daysPassed + weekDayFormated)/7 +1)
+        return week
+    }   
 
     static #projectCreator(data) {
         const project = new Project(
@@ -298,9 +340,10 @@ class Manager {
     static deleter(itemType, itemId) {
         Storer.deleteItem(itemType, itemId)
     }
+
 }
 
-class DOMRenderer {
+export class DOMRenderer {
 
     static HEADER = document.querySelector('.todo-header');
     static SIDEBAR = document.querySelector('.todo-sidebar');
@@ -412,7 +455,17 @@ class DOMRenderer {
 
 
     }
+
 }
+
+window.TODO = TODO;
+window.Project = Project;
+window.Note = Note;
+window.Storer = Storer;
+window.Utils = Utils;
+window.Manager = Manager;
+window.DOMRenderer = DOMRenderer;
+
 
 const projects = Storer.getItems('project');
 const cleanProjects = Object.values(projects)
@@ -421,7 +474,7 @@ const cleanProjects = Object.values(projects)
 
 DOMRenderer.renderProjectSidebar(cleanProjects)
 
-const todos = Storer.getItems('project');
+const todos = Storer.getItems('todo');
 const cleanTodos = Object.values(todos)
     .filter( todo => todo.hasOwnProperty('name'))
     .filter( todo => todo.name);

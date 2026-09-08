@@ -263,6 +263,7 @@ div[class^="modal"] {
 
 .btn-project {
     flex: 5;
+    overflow-x: hidden;
 }
 
 .btn-sidebar.btn-project-delete {
