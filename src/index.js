@@ -1,4 +1,6 @@
 import "./style.css";
+import { format, parseISO, getISOWeek, getISOWeekYear } from "date-fns";
+
 
 const form = document.querySelector('form');
 const btnModal = document.querySelector('.btn-modal-add');
@@ -39,7 +41,8 @@ export class Note {
 
 export class Storer {
 
-    static currentTabStore = '';
+    static currentTabIdStore = '';
+    static currentTabNameStore = '';
 
     static mapper = {
         'todo': 'todos',
@@ -48,12 +51,20 @@ export class Storer {
 
     };
 
-    get currentTab() {
-        return Storer.currentTabStore;
+    get currentTabId() {
+        return Storer.currentTabIdStore;
     }
 
-    set currentTab(tab) {
-        Storer.currentTabStore = tab;
+    set currentTabId(tabId) {
+        Storer.currentTabIdStore = tabId;
+    }
+
+    get currentTabName() {
+        return Storer.currentTabNameStore;
+    }
+
+    set currentTabName(tabName) {
+        Storer.currentTabNameStore = tabName;
     }
 
     static #updatedList(itemType, item) {
@@ -189,14 +200,22 @@ export class Storer {
         const itemStorage = Storer.mapper[itemType];
 
         try {
+            const itemArray = JSON.parse(localStorage.getItem(itemStorage)) ? JSON.parse(localStorage.getItem(itemStorage)) : [];
             console.log(`[Storer]: ${itemStorage} obtenidos correctamente.`);
-            return JSON.parse(localStorage.getItem(itemStorage));
+            return itemArray
         }
 
         catch{
             console.error(`[Storer]: No se han podido obtener los ${itemStorage}.`);
         }
 
+    }
+
+    static tabNameSaver(event) {
+        const projectID = event.target.id;
+        const projectName = event.target.textContent;
+        Storer.currentTabId = projectID;
+        Storer.currentTabName = projectName;
     }
 }
 
@@ -248,6 +267,64 @@ export class Utils {
             
         }
     }
+
+
+    static todoDateFilter(data, type) {
+
+        switch (type) {
+            case 'today': {
+                return data.filter(
+                    function (todo) {
+                        if (!todo.date) {
+                            return false
+                        }
+                        const currentDate = format(new Date(), 'dd-MM-yyyy');
+                        const todoDate = format(new Date(todo.date), 'dd-MM-yyyy');
+                        return currentDate === todoDate
+                    }
+
+                ) 
+            }
+
+            case 'week': {
+                const currentDate = new Date();
+                const currentWeek = getISOWeek(currentDate);
+                const currentYear = getISOWeekYear(currentDate);
+
+                return data.filter(
+                    function(todo) {
+                        if (!todo.date) {
+                            return false
+                        }
+                        console.log(todo.date);
+                        const todoDateFormated = parseISO(todo.date);
+                        const todoWeek = getISOWeek(todoDateFormated);
+                        console.log(todoWeek)
+                        const todoYear = getISOWeekYear(todoDateFormated);
+                        return (currentWeek === todoWeek) && (currentYear === todoYear)
+                    }
+                ) 
+            }
+
+        }
+
+        return data;
+
+    }
+
+
+    static projectFilter(data, projectID) {
+
+        return data.filter(
+            function (todo) {
+                if (!todo.project) {
+                    return false
+                }
+
+                return todo.project === projectdID
+            }
+        )
+    }
 }
 
 export class Manager {
@@ -263,48 +340,7 @@ export class Manager {
 
         Storer.saveItem('todo', todo)
     }
-
-    static todoDateFilter(data, type) {
-
-        switch (type) {
-            case 'today': {
-                return data.filter(
-                    todo => Date.parse(todo.date) === Date.now()
-                ) 
-            }
-
-            case 'week': {
-                const currentDate = new Date();
-                const currentDateString = currentDate.toString();
-                const currentWeek = Manager.#getweek(currentDateString);
-                const currentYear = currentDate.getFullYear();
-
-                const newDate = date.setDate(date.getDate()+ 7);
-                console.log(newDate)
-                return data.filter(
-                    function(todo) {
-                        const todoDate = todo.date;
-                        const todoDateFormated = new Date(todo.date);
-                        const todoWeek = Manager.#getweek(todoDate);
-                        const todoYear = todoDateFormated.getFullYear();
-                        return (currentWeek === todoWeek) && (currentYear === todoYear)
-                    }
-                ) 
-            }
-        }
-
-    }
-
-    static #getweek(date) {
-        const dateFormat = new Date(date)
-        const firstYearDate = new Date(dt.getFullYear(), 0, 1);
-        const daysPassed = Math.floor((dateFormat - firstYearDate)/(1000 * 0 * 60 * 24));
-        const weekDay = dateFormat.getDate();
-        const weekDayFormated = (weekDay === 0) ? 6: weekDay - 1;
-
-        const week = Math.floor((daysPassed + weekDayFormated)/7 +1)
-        return week
-    }   
+   
 
     static #projectCreator(data) {
         const project = new Project(
@@ -370,6 +406,13 @@ export class DOMRenderer {
             projectButton.setAttribute('class', 'btn-project');
             projectButton.setAttribute('id', project.id);
             projectButton.textContent = project.name;
+            projectButton.addEventListener('click', (event) => {
+                Storer.tabNameSaver(event);
+                // Transportar lógica - En papel
+                const data = Storer.getItems('todo');
+                const dataProject = Utils.projectFilter(data, Storer.currentTabId)
+                DOMRenderer.renderTODOS(dataProject)
+            })
 
             const deleteButton = document.createElement('button');
             deleteButton.setAttribute('class', 'btn-project');
@@ -466,6 +509,13 @@ window.Utils = Utils;
 window.Manager = Manager;
 window.DOMRenderer = DOMRenderer;
 
+localStorage.clear();
+
+
+const project1 = new Project('Project 1', 'Decr1');
+const project2 = new Project('Project 2', 'Decr2');
+Storer.saveItem('project', project1)
+Storer.saveItem('project', project2)
 
 const projects = Storer.getItems('project');
 const cleanProjects = Object.values(projects)
@@ -474,13 +524,37 @@ const cleanProjects = Object.values(projects)
 
 DOMRenderer.renderProjectSidebar(cleanProjects)
 
+
+
+// Test render Todos
+
+
+const todoWeek1 = new TODO('Week11','Week1','2026-09-07','low');
+const todoWeek12 = new TODO('Week12','Week1','2026-09-08','low');
+const todoWeek13 = new TODO('Week13','Week1','2026-09-09','low');
+const todoWeek14 = new TODO('Week14','Week1','2026-09-10','low');
+const todoWeek15 = new TODO('Week15','Week1','2026-09-11','low');
+const todoWeek16 = new TODO('Week16','Week1','2026-09-12','low');
+const todoWeek17 = new TODO('Week17','Week1','2026-09-13','low');
+const todoWeek21 = new TODO('Week21','Week2','2026-09-14','low');
+Storer.saveItem('todo', todoWeek1)
+Storer.saveItem('todo', todoWeek12)
+Storer.saveItem('todo', todoWeek13)
+Storer.saveItem('todo', todoWeek14)
+Storer.saveItem('todo', todoWeek15)
+Storer.saveItem('todo', todoWeek16)
+Storer.saveItem('todo', todoWeek17)
+Storer.saveItem('todo', todoWeek21)
+
 const todos = Storer.getItems('todo');
-const cleanTodos = Object.values(todos)
+const todos2 = Utils.todoDateFilter(todos, 'week')
+const cleanTodos = Object.values(todos2)
     .filter( todo => todo.hasOwnProperty('name'))
     .filter( todo => todo.name);
 
 DOMRenderer.renderTODOS(cleanTodos)
 
+DOMRenderer.rende
 // form.addEventListener('submit', function (event) {
 //         return Utils.getFormInfo(event, this.elements)
 //     }
