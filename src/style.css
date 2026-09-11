@@ -382,6 +382,7 @@ div[class^="modal"] {
     background-color: var(--modal-bg-color);
     margin: 24px;
     border-radius: 12px;
+    display: none;
 }
 
 div[class^="modal-"] {

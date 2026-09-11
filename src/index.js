@@ -41,8 +41,9 @@ export class Note {
 
 export class Storer {
 
-    static currentTabIdStore = '';
-    static currentTabNameStore = '';
+    static currentTabId = '';
+    static currentTabName = 'todos';
+    static currentTabType = 'todos';
 
     static mapper = {
         'todo': 'todos',
@@ -52,19 +53,27 @@ export class Storer {
     };
 
     get currentTabId() {
-        return Storer.currentTabIdStore;
+        return Storer.currentTabId;
     }
 
     set currentTabId(tabId) {
-        Storer.currentTabIdStore = tabId;
+        Storer.currentTabId = tabId;
     }
 
     get currentTabName() {
-        return Storer.currentTabNameStore;
+        return Storer.currentTabName;
     }
 
     set currentTabName(tabName) {
-        Storer.currentTabNameStore = tabName;
+        Storer.currentTabName = tabName;
+    }
+
+    get currentTabType() {
+        return Storer.currentTabType;
+    }
+
+    set currentTabType(tabType) {
+        Storer.currentTabType = tabType;
     }
 
     static #updatedList(itemType, item) {
@@ -167,9 +176,11 @@ export class Storer {
             const itemStorage = Storer.mapper[itemType];
 
             const listObj = JSON.parse(localStorage.getItem(itemStorage));
-
             const itemsFound = listObj.filter(
-                t => t.id === itemId
+                function (t) { 
+                    return t.id === itemId
+                
+                }
             )
             const filteredList = JSON.stringify(
                 listObj.filter(
@@ -211,11 +222,26 @@ export class Storer {
 
     }
 
-    static tabNameSaver(event) {
-        const projectID = event.target.id;
+    static projectTabNameSaver(event) {
+        const projectID = event.target.parentElement.id;
         const projectName = event.target.textContent;
         Storer.currentTabId = projectID;
         Storer.currentTabName = projectName;
+        Storer.currentTabTypeStore = 'projects';
+    }
+
+    static menuTabSaver(event) {
+        const tabID = '';
+        const tabName = Utils.getClass(event).split(' ').at(1);
+        Storer.currentTabId = tabID;
+        Storer.currentTabName = tabName;
+        if (tabName === 'notes') {
+            Storer.currentTabTypeStore = 'notes';
+        }
+
+        else {
+            Storer.currentTabTypeStore = 'todos';
+        }
     }
 }
 
@@ -269,7 +295,7 @@ export class Utils {
     }
 
 
-    static todoDateFilter(data, type) {
+    static todoFilter(data, type) {
 
         switch (type) {
             case 'today': {
@@ -296,10 +322,8 @@ export class Utils {
                         if (!todo.date) {
                             return false
                         }
-                        console.log(todo.date);
                         const todoDateFormated = parseISO(todo.date);
                         const todoWeek = getISOWeek(todoDateFormated);
-                        console.log(todoWeek)
                         const todoYear = getISOWeekYear(todoDateFormated);
                         return (currentWeek === todoWeek) && (currentYear === todoYear)
                     }
@@ -321,7 +345,7 @@ export class Utils {
                     return false
                 }
 
-                return todo.project === projectdID
+                return todo.project === projectID
             }
         )
     }
@@ -362,7 +386,6 @@ export class Manager {
 
     static creator(itemType, data) {
         const cleanData = Utils.dataFormatter(data)
-        console.log(cleanData)
         switch (itemType) {
             case 'todo':
                 Manager.#todoCreator(cleanData);
@@ -389,6 +412,45 @@ export class DOMRenderer {
 
     static MAIN = document.querySelector('.todo-main');
 
+    static BTNTODOS = document.querySelector('.btn-sidebar.todos');
+    static BTNTODAY = document.querySelector('.btn-sidebar.today');
+    static BTNWEEK = document.querySelector('.btn-sidebar.week');
+    static BTNNOTES = document.querySelector('.btn-sidebar.notes');
+
+    static BTNCREATE = document.querySelector('#create.btn-sidebar');
+
+    static MODALS = document.querySelector('.modals');
+
+    static renderBtns() {
+        DOMRenderer.BTNTODOS.addEventListener('click', (event) => {
+            const dataProject = EventHandler.menuTabTODOFilter(event)
+            const tabName = Storer.currentTabName;
+            const tabNameFormatted = tabName.at(0).toUpperCase() + tabName.slice(1).toLowerCase();
+            DOMRenderer.renderTODOS(dataProject, tabNameFormatted);
+
+        });
+        DOMRenderer.BTNTODAY.addEventListener('click', (event) => {
+            const dataProject = EventHandler.menuTabTODOFilter(event)
+            const tabName = Storer.currentTabName;
+            const tabNameFormatted = tabName.at(0).toUpperCase() + tabName.slice(1).toLowerCase();
+            DOMRenderer.renderTODOS(dataProject, tabNameFormatted);
+
+        });
+        DOMRenderer.BTNWEEK.addEventListener('click', (event) => {
+            const dataProject = EventHandler.menuTabTODOFilter(event)
+            const tabName = Storer.currentTabName;
+            const tabNameFormatted = tabName.at(0).toUpperCase() + tabName.slice(1).toLowerCase();
+            DOMRenderer.renderTODOS(dataProject, tabNameFormatted);
+        });
+        DOMRenderer.BTNNOTES.addEventListener('click', (event) => {
+            const data = EventHandler.menuTabNotes()
+            DOMRenderer.renderNotes(data);
+        });
+        DOMRenderer.BTNCREATE.addEventListener('click', (event) => {
+            DOMRenderer.renderCreateModal();
+        })
+    }
+
     static renderProjectSidebar(projects) {
 
         DOMRenderer.PROJECTSIDEBARCONT.innerHTML = '';
@@ -401,22 +463,29 @@ export class DOMRenderer {
         for (const project of projects) {
             const projectContainer = document.createElement('div');
             projectContainer.setAttribute('class', 'project-container')
+            projectContainer.setAttribute('id', project.id);
             
             const projectButton = document.createElement('button');
             projectButton.setAttribute('class', 'btn-project');
-            projectButton.setAttribute('id', project.id);
             projectButton.textContent = project.name;
             projectButton.addEventListener('click', (event) => {
-                Storer.tabNameSaver(event);
-                // Transportar lógica - En papel
-                const data = Storer.getItems('todo');
-                const dataProject = Utils.projectFilter(data, Storer.currentTabId)
-                DOMRenderer.renderTODOS(dataProject)
+                const dataProject = EventHandler.projectSidebarFilter(event);
+                DOMRenderer.renderTODOS(dataProject, Storer.currentTabName)
             })
 
             const deleteButton = document.createElement('button');
             deleteButton.setAttribute('class', 'btn-project');
             deleteButton.textContent = 'X';
+            deleteButton.addEventListener('click', (event) => {
+                const projects = EventHandler.projectSidebarDeleter(event);
+
+                DOMRenderer.renderProjectSidebar(projects);
+
+                if (Storer.currentTabId === event.target.parentElement.id) {
+                    const data = Storer.getItems('todo');
+                    DOMRenderer.renderTODOS(data, 'Todos');
+                }
+            })
             
             projectContainer.appendChild(projectButton);
             projectContainer.appendChild(deleteButton)
@@ -434,6 +503,7 @@ export class DOMRenderer {
         const tabName = document.createElement('h1');
         tabName.setAttribute('class', 'tab-name');
         tabName.textContent = currentTab;
+        DOMRenderer.MAIN.appendChild(tabName);
 
         for (const todo of todos) {
             const todoItemCol = document.createElement('div');
@@ -470,19 +540,22 @@ export class DOMRenderer {
             colDetail.setAttribute('class', 'btn-col col-detail');
             colDetail.setAttribute('id', todo.id);
             colDetail.textContent = '?';
-            // Lógica addEventListener
 
             const colEdit = document.createElement('button');
             colEdit.setAttribute('class', 'btn-col col-edit');
             colEdit.setAttribute('id', todo.id);
             colEdit.textContent = 'Edit';
-            // Lógica addEventListener
 
             const colDelete = document.createElement('button');
             colDelete.setAttribute('class', 'btn-col col-delete');
             colDelete.setAttribute('id', todo.id);
             colDelete.textContent = 'X';
-            // Lógica addEventListener
+            colDelete.addEventListener('click', (event) => {
+                const dataFiltered = EventHandler.menuTODODeleter(event);
+                const tabName = Storer.currentTabName;
+                const tabNameFormatted = tabName.at(0).toUpperCase() + tabName.slice(1).toLowerCase();
+                DOMRenderer.renderTODOS(dataFiltered, tabNameFormatted);
+            })
 
             todoItemColAct.appendChild(colDate);
             todoItemColAct.appendChild(colDetail);
@@ -495,11 +568,109 @@ export class DOMRenderer {
 
             DOMRenderer.MAIN.appendChild(todoItemCol)
         }
+    }
+
+    static renderNotes(notes) {
+        DOMRenderer.MAIN.innerHTML = '';
+        
+        const tabName = document.createElement('h1');
+        tabName.setAttribute('class', 'tab-name');
+        tabName.textContent = 'Notes';
+        DOMRenderer.MAIN.appendChild(tabName);
+
+        const notesCol = document.createElement('div');
+        notesCol.setAttribute('class', 'notes-col');
+
+        for (const note of notes) {
+            const noteItemCol = document.createElement('div');
+            noteItemCol.setAttribute('class', 'note-item-col');
+            noteItemCol.setAttribute('id', note.id);
+            
+            const bntNote = document.createElement('button');
+            bntNote.setAttribute('class', 'btn-note-item-col');
+            bntNote.textContent = 'X';
+            bntNote.addEventListener('click', (event) => {
+                const data = EventHandler.noteMainDeleter(event);
+                DOMRenderer.renderNotes(data);
+            })
+            
+            const dscrNote = document.createElement('p');
+            dscrNote.setAttribute('class', 'dscr-note-item-col');
+            dscrNote.textContent = note.description;
+        
+            noteItemCol.appendChild(bntNote);
+            noteItemCol.appendChild(dscrNote);
+
+            notesCol.appendChild(noteItemCol);
+        }
+
+        DOMRenderer.MAIN.appendChild(tabName);
+        DOMRenderer.MAIN.appendChild(notesCol);
+    }
+
+    static renderCreateModal() {
+        DOMRenderer.MODALS.display = 'flex';
+        console.log('Hey')
+    }
+}
+
+class EventHandler {
+
+    static projectSidebarFilter(event) {
+        Storer.projectTabNameSaver(event);
+        const data = Storer.getItems('todo');
+        const dataProject = Utils.projectFilter(data, Storer.currentTabId)
+        return dataProject;
+    }
 
 
+    static projectSidebarDeleter(event) {
+        const projectID = event.target.parentElement.id;
+        Manager.deleter('project', projectID);
+        const projects = Storer.getItems('project');
+
+        return projects;
+    }
+
+    static menuTabTODOFilter(event) {
+        Storer.menuTabSaver(event);
+        const tabName = Utils.getClass(event).split(' ').at(1);
+        if (tabName === 'notes') {
+            return
+        }
+        const data = Storer.getItems('todo');
+        const dataFiltered = Utils.todoFilter(data, Storer.currentTabName);
+        return dataFiltered;
+    }
+
+    static menuTabNotes() {
+        const data = Storer.getItems('note');
+        return data;
+    }
+
+    static menuTODODeleter(event) {
+        const todoID = event.target.parentElement.parentElement.id;
+        Manager.deleter('todo', todoID);
+        const data = Storer.getItems('todo');
+        if (Storer.currentTabTypeStore === 'projects') {
+            const dataFiltered = Utils.projectFilter(data, Storer.currentTabName) 
+            DOMRenderer.renderTODOS(dataFiltered, Storer.currentTabName);
+            return
+        }
+        
+        const dataFiltered = Utils.todoFilter(data, Storer.currentTabName);
+        return dataFiltered;
+    }
+
+    static noteMainDeleter(event) {
+        const noteID = event.target.parentElement.id;
+        Manager.deleter('note', noteID);
+        const data = Storer.getItems('note');
+        return data;
     }
 
 }
+
 
 window.TODO = TODO;
 window.Project = Project;
@@ -547,14 +718,25 @@ Storer.saveItem('todo', todoWeek17)
 Storer.saveItem('todo', todoWeek21)
 
 const todos = Storer.getItems('todo');
-const todos2 = Utils.todoDateFilter(todos, 'week')
+const todos2 = Utils.todoFilter(todos, 'week')
 const cleanTodos = Object.values(todos2)
     .filter( todo => todo.hasOwnProperty('name'))
     .filter( todo => todo.name);
 
-DOMRenderer.renderTODOS(cleanTodos)
+DOMRenderer.renderTODOS(todos, 'Todos')
 
-DOMRenderer.rende
+DOMRenderer.renderBtns()
+
+
+const note1 = new Note('Nota 1', 'Esta es una nota que sirve de prueba');
+const note2 = new Note('Nota 2', 'Esta es una nota que sirve de prueba');
+const note3 = new Note('Nota 3', 'Esta es una nota que sirve de prueba');
+const note4 = new Note('Nota 4', 'Esta es una nota que sirve de prueba');
+Storer.saveItem('note', note1);
+Storer.saveItem('note', note2);
+Storer.saveItem('note', note3);
+Storer.saveItem('note', note4);
+
 // form.addEventListener('submit', function (event) {
 //         return Utils.getFormInfo(event, this.elements)
 //     }

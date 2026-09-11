@@ -462,9 +462,4 @@ Clase Listener/Orquestator
 
 PENDIENTE
 
-- Acabar renderizados
-- Dejar anotado dónde añadir eventlisteners
-    - Primero el almacenar currentTab y currentTabId
-    - Luego el resto
-    - Quizás el event listener solo debería servir para enviar mensajes y el resto de acciones que las capture un listener y orqueste.
-- Seguir con las lógicas
+- Renderizado de modales
