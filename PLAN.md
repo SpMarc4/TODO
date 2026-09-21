@@ -462,4 +462,9 @@ Clase Listener/Orquestator
 
 PENDIENTE
 
-- Renderizado de modales
+- En principio el renderizado de modales está hecho, revisarlo
+- Falta aplicar event al renderizado de modal info y modal edit de los todos.
+- Crear eventos para la creación de artefactos
+- Es importante tener en cuenta la creación de todos en proyectos como gestionarlo
+mi idea actual es mediante la naveación de las tabs cuando se pulsa un proyecto se almacena se id y su nombre y su tipo, antes de crear un TODO se mira si el tipo es projects y se le asigna el valor de la ID.
+- Poner la fecha.

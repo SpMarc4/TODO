@@ -609,8 +609,279 @@ export class DOMRenderer {
     }
 
     static renderCreateModal() {
-        DOMRenderer.MODALS.display = 'flex';
-        console.log('Hey')
+        DOMRenderer.MODALS.innerHTML = '';
+        DOMRenderer.MODALS.style['display'] = 'flex';
+
+        const modalCreate = document.createElement('div');
+        modalCreate.setAttribute('class', 'modal-create')
+        
+        const btnProject = document.createElement('button');
+        btnProject.setAttribute('class', 'btn-modal');
+        btnProject.textContent = 'Project';
+        btnProject.addEventListener('click', () => {
+            DOMRenderer.renderProjectEditModal();
+        })
+
+        const btnTODO = document.createElement('button');
+        btnTODO.setAttribute('class', 'btn-modal');
+        btnTODO.textContent = 'TODO';
+        btnTODO.addEventListener('click', () => {
+            DOMRenderer.renderTODOModal( {
+                name : 'pepe',
+                description : 'lu',
+                priority : 'high',
+                mode : 'info'
+            }
+            );
+        })
+
+        const btnNote = document.createElement('button');
+        btnNote.setAttribute('class', 'btn-modal');
+        btnNote.textContent = 'Note';
+        btnNote.addEventListener('click', () => {
+            DOMRenderer.renderNoteEditModal();
+        })
+
+        const btnClose = document.createElement('button');
+        btnClose.setAttribute('class', 'btn-modal-close');
+        btnClose.textContent = 'X';
+        btnClose.addEventListener('click', () => {
+            DOMRenderer.renderCloseModal();
+        })
+
+        modalCreate.appendChild(btnProject);
+        modalCreate.appendChild(btnTODO);
+        modalCreate.appendChild(btnNote);
+        modalCreate.appendChild(btnClose);
+
+        DOMRenderer.MODALS.appendChild(modalCreate);
+
+    }
+
+    static renderCloseModal() {
+        DOMRenderer.MODALS.innerHTML = '';
+        DOMRenderer.MODALS.style['display'] = 'none';
+    }
+
+    static renderTODOModal(
+        {
+            name = '',
+            description = '',
+            date = '',
+            priority = '',
+            mode = 'edit'
+        }
+    ) {
+        DOMRenderer.MODALS.innerHTML = '';
+        DOMRenderer.MODALS.style['display'] = 'flex';
+        
+        const modalTODOEdit = document.createElement('div');
+        modalTODOEdit.setAttribute('class', `modal-todo ${mode}`);
+
+        const btnClose = document.createElement('button');
+        btnClose.setAttribute('class', 'btn-modal-close edit');
+        btnClose.textContent = 'X';
+        btnClose.addEventListener('click', () => {
+            DOMRenderer.renderCloseModal();
+        })
+
+        const formTODO = document.createElement('form');
+        formTODO.setAttribute('class', 'form-todo');
+
+        const formTODOFieldName = document.createElement('div');
+        formTODOFieldName.setAttribute('class', 'form-todo-field');
+        const todoLabelName = document.createElement('label');
+        todoLabelName.setAttribute('for', 'todo-field-name');
+        todoLabelName.textContent = 'TODO Name:';
+        const inputName = document.createElement('input');
+        inputName.setAttribute('type', 'text');
+        inputName.setAttribute('id', 'todo-field-name');
+        inputName.setAttribute('placeholder', 'Write here...');
+        inputName.setAttribute('required', '');
+        inputName.setAttribute('name', 'name');
+        inputName.setAttribute('value', name);
+        inputName.textContent = name;
+
+        formTODOFieldName.appendChild(todoLabelName);
+        formTODOFieldName.appendChild(inputName);
+
+        const formTODOFieldDscr = document.createElement('div');
+        formTODOFieldDscr.setAttribute('class', 'form-todo-field');
+        const todoFieldDscr = document.createElement('label');
+        todoFieldDscr.setAttribute('for', 'todo-field-description');
+        todoFieldDscr.textContent = 'Description:'
+        const textDescription = document.createElement('textarea');
+        textDescription.setAttribute('id', 'todo-field-description');
+        textDescription.setAttribute('placeholder', 'Write here...');
+        textDescription.setAttribute('name', 'description');
+        textDescription.setAttribute('value', description);
+        textDescription.textContent = description;
+
+        formTODOFieldDscr.appendChild(todoFieldDscr);
+        formTODOFieldDscr.appendChild(textDescription);
+
+        const formTODOFieldDate = document.createElement('div');
+        formTODOFieldDate.setAttribute('class', 'form-todo-field');
+        const todoFieldDate = document.createElement('label');
+        todoFieldDate.setAttribute('for', 'todo-field-date');
+        todoFieldDate.textContent = 'Date:'
+        const inputDate = document.createElement('input');
+        inputDate.setAttribute('type', 'date');
+        inputDate.setAttribute('id', 'todo-field-date');
+        inputDate.setAttribute('required', '');
+        inputDate.setAttribute('name', 'date');
+        inputDate.setAttribute('date', date);
+        inputDate.textContent = date;
+
+        formTODOFieldDate.appendChild(todoFieldDate);
+        formTODOFieldDate.appendChild(inputDate);
+
+        const formTODOFieldPriority = document.createElement('div');
+        formTODOFieldPriority.setAttribute('class', 'form-todo-field');
+        const todoFieldPriority = document.createElement('label');
+        todoFieldPriority.setAttribute('for', 'todo-field-priority');
+        todoFieldPriority.textContent = 'Priority';
+        const selectPriority = document.createElement('select');
+        selectPriority.setAttribute('id', 'todo-field-priority');
+        selectPriority.setAttribute('name', 'priority');
+        selectPriority.setAttribute('value', priority);
+        const optionLow = document.createElement('option');
+        optionLow.setAttribute('value', 'low');
+        optionLow.textContent = 'Low';
+        const optionMedium = document.createElement('option');
+        optionMedium.setAttribute('value', 'medium');
+        optionMedium.textContent = 'Medium';
+        const optionHigh = document.createElement('option');
+        optionHigh.setAttribute('value', 'high');
+        optionHigh.textContent = 'High';
+        selectPriority.appendChild(optionLow);
+        selectPriority.appendChild(optionMedium);
+        selectPriority.appendChild(optionHigh);
+
+        formTODOFieldPriority.appendChild(todoFieldPriority);
+        formTODOFieldPriority.appendChild(selectPriority);
+
+        const btnAdd = document.createElement('button');
+        btnAdd.setAttribute('class', 'btn-modal-add');
+        btnAdd.setAttribute('type', 'submit');
+        btnAdd.textContent = 'Accept Changes';
+        // Añadir evento
+
+        formTODO.appendChild(formTODOFieldName);
+        formTODO.appendChild(formTODOFieldDscr);
+        formTODO.appendChild(formTODOFieldDate);
+        formTODO.appendChild(formTODOFieldPriority);
+        formTODO.appendChild(btnAdd);
+
+        modalTODOEdit.appendChild(btnClose);
+        modalTODOEdit.appendChild(formTODO);
+
+        DOMRenderer.MODALS.appendChild(modalTODOEdit);
+    }
+
+    static renderProjectEditModal() {
+        DOMRenderer.MODALS.innerHTML = '';
+        DOMRenderer.MODALS.style['display'] = 'flex';
+
+        const modalProjectEdit = document.createElement('div');
+        modalProjectEdit.setAttribute('class', 'modal-project-edit');
+
+        const btnModalClose = document.createElement('button');
+        btnModalClose.setAttribute('class', 'btn-modal-close edit');
+        btnModalClose.textContent = 'X';
+        btnModalClose.addEventListener('click', () => {
+            DOMRenderer.renderCloseModal();
+        });
+
+        const formProject = document.createElement('form');
+        formProject.setAttribute('class', 'form-project');
+
+        const formProjectField = document.createElement('div');
+        formProjectField.setAttribute('class', 'form-project-field');
+
+        const projectLabelName = document.createElement('label');
+        projectLabelName.setAttribute('for', 'project-field-name');
+        projectLabelName.textContent = 'Project name:';
+        const inputProjectName = document.createElement('input');
+        inputProjectName.setAttribute('type', 'text');
+        inputProjectName.setAttribute('id', 'project-field-name');
+        inputProjectName.setAttribute('placeholder', 'Write here...');
+        inputProjectName.setAttribute('required', '');
+
+        formProjectField.appendChild(projectLabelName);
+        formProjectField.appendChild(inputProjectName);
+
+        const btnAdd = document.createElement('button');
+        btnAdd.setAttribute('class', 'btn-modal-add');
+        btnAdd.setAttribute('type', 'submit');
+        btnAdd.textContent = 'Accept Changes';
+        // Añadir evento
+        
+        formProject.appendChild(formProjectField);
+        formProject.appendChild(btnAdd);
+
+        modalProjectEdit.appendChild(btnModalClose);
+        modalProjectEdit.appendChild(formProject);
+
+        DOMRenderer.MODALS.appendChild(modalProjectEdit);
+    }
+
+    static renderNoteEditModal() {
+        DOMRenderer.MODALS.innerHTML = '';
+        DOMRenderer.MODALS.style['display'] = 'flex';
+        
+        const modalNoteEdit = document.createElement('div');
+        modalNoteEdit.setAttribute('class', 'modal-note-edit');
+
+        const btnClose = document.createElement('button');
+        btnClose.setAttribute('class', 'btn-modal-close edit');
+        btnClose.textContent = 'X';
+        btnClose.addEventListener('click', () => {
+            DOMRenderer.renderCloseModal();
+        })
+
+        const formNote = document.createElement('form');
+        formNote.setAttribute('class', 'form-note');
+
+        const formNoteFieldName = document.createElement('div');
+        formNoteFieldName.setAttribute('class', 'form-note-field');
+
+        const noteLabelName = document.createElement('label');
+        noteLabelName.setAttribute('for', 'note-field-name');
+        noteLabelName.textContent = 'Note name:';
+        const inputName = document.createElement('input');
+        inputName.setAttribute('type', 'text');
+        inputName.setAttribute('id', 'note-field-name');
+        inputName.setAttribute('placeholder', 'Write here...');
+        inputName.setAttribute('required', '');
+        formNoteFieldName.appendChild(noteLabelName);
+        formNoteFieldName.appendChild(inputName);
+
+        const formNoteFieldDscr = document.createElement('div');
+        formNoteFieldDscr.setAttribute('class', 'form-note-field');
+        const noteLabelDscr = document.createElement('label');
+        noteLabelDscr.setAttribute('for', 'note-field-description');
+        noteLabelDscr.textContent = 'Description:';
+        const noteTextAreaDscr = document.createElement('textarea');
+        noteTextAreaDscr.setAttribute('id', 'note-field-description');
+        noteTextAreaDscr.setAttribute('placeholder', 'Write here...');
+        formNoteFieldDscr.appendChild(noteLabelDscr);
+        formNoteFieldDscr.appendChild(noteTextAreaDscr);
+
+        const btnAdd = document.createElement('button');
+        btnAdd.setAttribute('class', 'btn-modal-add');
+        btnAdd.setAttribute('type', 'submit');
+        btnAdd.textContent = 'Accept Changes';
+        // Añadir evento 
+
+        formNote.appendChild(formNoteFieldName);
+        formNote.appendChild(formNoteFieldDscr);
+        formNote.appendChild(btnAdd);
+
+        modalNoteEdit.appendChild(btnClose);
+        modalNoteEdit.appendChild(formNote);
+
+        DOMRenderer.MODALS.appendChild(modalNoteEdit);
     }
 }
 
