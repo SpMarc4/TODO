@@ -76,11 +76,22 @@ export class Storer {
         Storer.currentTabType = tabType;
     }
 
-    static #updatedList(itemType, item) {
+    static #updatedList(itemType, item, mode) {
         const itemStorage = Storer.mapper[itemType];
+        let newListObj = [];
         const listObj = JSON.parse(localStorage.getItem(itemStorage));
-        listObj.push(item);
-        return JSON.stringify(listObj);
+        if (mode === 'create') {
+            listObj.push(item);
+            newListObj = listObj;
+        }
+
+        else if (mode === 'edit') {
+            newListObj = listObj.map(
+                (object) => object.id === item.id ? item : object
+            )
+        }
+
+        return JSON.stringify(newListObj);
     }
     
     static #itemChecker(itemType) {
@@ -121,10 +132,10 @@ export class Storer {
         }
     }
 
-    static saveItem(itemType, item) {
+    static saveItem(itemType, item, mode = 'create') {
 
         Storer.#itemChecker(itemType);
-        Storer.#typeItemChecker(itemType, item);
+        if (mode === 'create') {Storer.#typeItemChecker(itemType, item);}
 
         const itemStorage = Storer.mapper[itemType];
 
@@ -133,7 +144,7 @@ export class Storer {
         }
 
         try {
-            const listStr = Storer.#updatedList(itemType, item);
+            const listStr = Storer.#updatedList(itemType, item, mode);
             localStorage.setItem(itemStorage, listStr);
             console.log(`[Storer]: ${itemType} almacenado correctamente.`);
         }
@@ -154,7 +165,6 @@ export class Storer {
             const filteredList = listObj.filter( t => t.id === itemId );
 
             if (filteredList.length < 1) {
-                console.log(`[Storer]: Id no encontrado ${itemId}. Asegurese del formato.`)
                 return
             }
 
@@ -227,7 +237,7 @@ export class Storer {
         const projectName = event.target.textContent;
         Storer.currentTabId = projectID;
         Storer.currentTabName = projectName;
-        Storer.currentTabTypeStore = 'projects';
+        Storer.currentTabType = 'projects';
     }
 
     static menuTabSaver(event) {
@@ -236,11 +246,11 @@ export class Storer {
         Storer.currentTabId = tabID;
         Storer.currentTabName = tabName;
         if (tabName === 'notes') {
-            Storer.currentTabTypeStore = 'notes';
+            Storer.currentTabType = 'notes';
         }
 
         else {
-            Storer.currentTabTypeStore = 'todos';
+            Storer.currentTabType = 'todos';
         }
     }
 }
@@ -277,22 +287,22 @@ export class Utils {
         }
     }
 
-    static dataFormatter(data) {
-        try {
-            for ( const key of Object.keys(data)) {
-                const cleanKey = key.split('-').at(-1);
-                data[cleanKey] = data[key];
-                delete data[key]
-            }
-            console.log(`[Utils] Formateo de los datos correcto`)
-            return data
-        }
+    // static dataFormatter(data) {
+    //     try {
+    //         for ( const key of Object.keys(data)) {
+    //             const cleanKey = key.split('-').at(-1);
+    //             data[cleanKey] = data[key];
+    //             delete data[key]
+    //         }
+    //         console.log(`[Utils] Formateo de los datos correcto`);
+    //         return data
+    //     }
 
-        catch {
-            console.Error(`[Utils] No se han podido formatear los datos correctamente.`)
+    //     catch {
+    //         console.error(`[Utils] No se han podido formatear los datos correctamente.`);
             
-        }
-    }
+    //     }
+    // }
 
 
     static todoFilter(data, type) {
@@ -353,18 +363,34 @@ export class Utils {
 
 export class Manager {
 
-    static #todoCreator(data) {
+    static #todoEditor(data) {
 
-        const todo = new TODO(
-            data.name,
-            data.description,
-            data.date,
-            data.priority
-        )
+        if (!data.id) {
+            const todo = new TODO(
+                data.name,
+                data.description,
+                data.date,
+                data.priority,
+                data.project ? data.project : null
+            )
 
-        Storer.saveItem('todo', todo)
+            Storer.saveItem('todo', todo, 'create')
+            return
+        }
+
+        const oldTodo = Storer.getItem('todo', data.id);
+        console.log('viejo TODO', oldTodo);
+
+        oldTodo.id = data.id;
+        oldTodo.name = data.name;
+        oldTodo.description = data.description;
+        oldTodo.priority = data.priority;
+
+        console.log('nuevo TODO', oldTodo);
+        Storer.saveItem('todo', oldTodo, 'edit')
+
+        
     }
-   
 
     static #projectCreator(data) {
         const project = new Project(
@@ -384,15 +410,20 @@ export class Manager {
         Storer.saveItem('note', note)
     }
 
-    static creator(itemType, data) {
-        const cleanData = Utils.dataFormatter(data)
+    static editor(itemType, data) {
+        // const cleanData = Utils.dataFormatter(data)
         switch (itemType) {
             case 'todo':
-                Manager.#todoCreator(cleanData);
+                Manager.#todoEditor(data);
+                break;
+
             case 'project':
-                Manager.#projectCreator(cleanData);
+                Manager.#projectCreator(data);
+                break;
+
             case 'note':
-                Manager.#noteCreator(cleanData);
+                Manager.#noteCreator(data);
+                break;
         }
     }
 
@@ -461,6 +492,7 @@ export class DOMRenderer {
         //     .filter( project => project.name);
 
         for (const project of projects) {
+            console.log(project)
             const projectContainer = document.createElement('div');
             projectContainer.setAttribute('class', 'project-container')
             projectContainer.setAttribute('id', project.id);
@@ -538,17 +570,22 @@ export class DOMRenderer {
 
             const colDetail = document.createElement('button');
             colDetail.setAttribute('class', 'btn-col col-detail');
-            colDetail.setAttribute('id', todo.id);
             colDetail.textContent = '?';
+            colDetail.addEventListener('click', (event) => {
+                const todoData = EventHandler.todoData(event, 'info');
+                DOMRenderer.renderTODOModal(todoData);
+            })
 
             const colEdit = document.createElement('button');
             colEdit.setAttribute('class', 'btn-col col-edit');
-            colEdit.setAttribute('id', todo.id);
             colEdit.textContent = 'Edit';
+            colEdit.addEventListener('click', (event) => {
+                const todoData = EventHandler.todoData(event, 'edit');
+                DOMRenderer.renderTODOModal(todoData);
+            });
 
             const colDelete = document.createElement('button');
             colDelete.setAttribute('class', 'btn-col col-delete');
-            colDelete.setAttribute('id', todo.id);
             colDelete.textContent = 'X';
             colDelete.addEventListener('click', (event) => {
                 const dataFiltered = EventHandler.menuTODODeleter(event);
@@ -608,6 +645,16 @@ export class DOMRenderer {
         DOMRenderer.MAIN.appendChild(notesCol);
     }
 
+    static renderMain(data, currentTab = '') {
+        if (Storer.currentTabName !== 'notes') {
+            DOMRenderer.renderTODOS(data, currentTab)
+            return
+        }
+
+        DOMRenderer.renderNotes(data)
+
+    }
+
     static renderCreateModal() {
         DOMRenderer.MODALS.innerHTML = '';
         DOMRenderer.MODALS.style['display'] = 'flex';
@@ -626,12 +673,10 @@ export class DOMRenderer {
         btnTODO.setAttribute('class', 'btn-modal');
         btnTODO.textContent = 'TODO';
         btnTODO.addEventListener('click', () => {
-            DOMRenderer.renderTODOModal( {
-                name : 'pepe',
-                description : 'lu',
-                priority : 'high',
-                mode : 'info'
-            }
+            DOMRenderer.renderTODOModal(
+                {
+                    mode : 'edit'
+                }
             );
         })
 
@@ -665,6 +710,7 @@ export class DOMRenderer {
 
     static renderTODOModal(
         {
+            id = '',
             name = '',
             description = '',
             date = '',
@@ -714,7 +760,6 @@ export class DOMRenderer {
         textDescription.setAttribute('id', 'todo-field-description');
         textDescription.setAttribute('placeholder', 'Write here...');
         textDescription.setAttribute('name', 'description');
-        textDescription.setAttribute('value', description);
         textDescription.textContent = description;
 
         formTODOFieldDscr.appendChild(todoFieldDscr);
@@ -730,8 +775,7 @@ export class DOMRenderer {
         inputDate.setAttribute('id', 'todo-field-date');
         inputDate.setAttribute('required', '');
         inputDate.setAttribute('name', 'date');
-        inputDate.setAttribute('date', date);
-        inputDate.textContent = date;
+        inputDate.value = date;
 
         formTODOFieldDate.appendChild(todoFieldDate);
         formTODOFieldDate.appendChild(inputDate);
@@ -765,13 +809,16 @@ export class DOMRenderer {
         btnAdd.setAttribute('class', 'btn-modal-add');
         btnAdd.setAttribute('type', 'submit');
         btnAdd.textContent = 'Accept Changes';
-        // Añadir evento
 
         formTODO.appendChild(formTODOFieldName);
         formTODO.appendChild(formTODOFieldDscr);
         formTODO.appendChild(formTODOFieldDate);
         formTODO.appendChild(formTODOFieldPriority);
         formTODO.appendChild(btnAdd);
+        formTODO.addEventListener('submit', function (event) {
+            EventHandler.artifactHandler(event, 'todo', id);
+            DOMRenderer.renderCloseModal();
+        })
 
         modalTODOEdit.appendChild(btnClose);
         modalTODOEdit.appendChild(formTODO);
@@ -806,6 +853,7 @@ export class DOMRenderer {
         inputProjectName.setAttribute('type', 'text');
         inputProjectName.setAttribute('id', 'project-field-name');
         inputProjectName.setAttribute('placeholder', 'Write here...');
+        inputProjectName.setAttribute('name', 'name');
         inputProjectName.setAttribute('required', '');
 
         formProjectField.appendChild(projectLabelName);
@@ -819,6 +867,12 @@ export class DOMRenderer {
         
         formProject.appendChild(formProjectField);
         formProject.appendChild(btnAdd);
+        formProject.addEventListener('submit', function (event) {
+            EventHandler.artifactHandler(event, 'project');
+            DOMRenderer.renderCloseModal();
+            const projects = Storer.getItems('project');
+            DOMRenderer.renderProjectSidebar(projects);
+        })
 
         modalProjectEdit.appendChild(btnModalClose);
         modalProjectEdit.appendChild(formProject);
@@ -853,6 +907,7 @@ export class DOMRenderer {
         inputName.setAttribute('type', 'text');
         inputName.setAttribute('id', 'note-field-name');
         inputName.setAttribute('placeholder', 'Write here...');
+        inputName.setAttribute('name', 'name');
         inputName.setAttribute('required', '');
         formNoteFieldName.appendChild(noteLabelName);
         formNoteFieldName.appendChild(inputName);
@@ -864,6 +919,7 @@ export class DOMRenderer {
         noteLabelDscr.textContent = 'Description:';
         const noteTextAreaDscr = document.createElement('textarea');
         noteTextAreaDscr.setAttribute('id', 'note-field-description');
+        noteTextAreaDscr.setAttribute('name', 'description');
         noteTextAreaDscr.setAttribute('placeholder', 'Write here...');
         formNoteFieldDscr.appendChild(noteLabelDscr);
         formNoteFieldDscr.appendChild(noteTextAreaDscr);
@@ -872,11 +928,16 @@ export class DOMRenderer {
         btnAdd.setAttribute('class', 'btn-modal-add');
         btnAdd.setAttribute('type', 'submit');
         btnAdd.textContent = 'Accept Changes';
-        // Añadir evento 
+
 
         formNote.appendChild(formNoteFieldName);
         formNote.appendChild(formNoteFieldDscr);
         formNote.appendChild(btnAdd);
+        formNote.addEventListener('submit', function (event) {
+            EventHandler.artifactHandler(event, 'note');
+            DOMRenderer.renderCloseModal();
+
+        })
 
         modalNoteEdit.appendChild(btnClose);
         modalNoteEdit.appendChild(formNote);
@@ -919,11 +980,19 @@ class EventHandler {
         return data;
     }
 
+    static mainData(event = '') {
+        if (Storer.currentTabName !== notes) {
+            return EventHandler.menuTabTODOFilter(event);
+        }
+
+        return EventHandler.menuTabNotes
+    }
+
     static menuTODODeleter(event) {
         const todoID = event.target.parentElement.parentElement.id;
         Manager.deleter('todo', todoID);
         const data = Storer.getItems('todo');
-        if (Storer.currentTabTypeStore === 'projects') {
+        if (Storer.currentTabType === 'projects') {
             const dataFiltered = Utils.projectFilter(data, Storer.currentTabName) 
             DOMRenderer.renderTODOS(dataFiltered, Storer.currentTabName);
             return
@@ -938,6 +1007,34 @@ class EventHandler {
         Manager.deleter('note', noteID);
         const data = Storer.getItems('note');
         return data;
+    }
+
+    static todoData(event, mode) {
+        const todoID = event.target.parentElement.parentElement.id;
+        console.log(todoID)
+        const data = Storer.getItem('todo', todoID);
+        data['mode'] = mode;
+        console.log(data)
+        return data;
+    }
+
+    static artifactHandler(event, itemType, id) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        let data = {};
+        for (const [name, value] of formData) {
+            data[name] = value;
+        }
+        
+        data['id'] = id;
+
+        const currentTabType = Storer.currentTabType;
+        if (itemType === 'todo') {
+            if (currentTabType === 'projects') {
+                data['project'] = Storer.currentTabId;
+            }
+        }
+        Manager.editor(itemType, data)
     }
 
 }
