@@ -463,8 +463,7 @@ Clase Listener/Orquestator
 PENDIENTE
 
 
-- Poner la fecha.
+- Aplicar renderizaciones en la tab pertinente una vez creados los items. Esto es lo que hay que mirar mas atentamente. Está prácticamente hecho hay que revisar que pasar con las notes y el almacenado de currentTabName.
 
-- Aplicar renderizaciones en la tab pertinente una vez creados los items. Esto es lo que hay que mirar mas atentamente
-- Editar TODO en lugar de crear uno nuevo Esto parece que ya etá arreglado pero revisar.
+- Editar TODO en lugar de crear uno nuevo Esto parece que ya está arreglado pero revisar.
 - Filtrar bien el por id de proyecto. Parce que está bien pero revisar.
