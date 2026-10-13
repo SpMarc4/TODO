@@ -463,7 +463,4 @@ Clase Listener/Orquestator
 PENDIENTE
 
 
-- Aplicar renderizaciones en la tab pertinente una vez creados los items. Esto es lo que hay que mirar mas atentamente. Está prácticamente hecho hay que revisar que pasa con las notes y el almacenado de currentTabName.
-
-- Editar TODO en lugar de crear uno nuevo Esto parece que ya está arreglado pero revisar.
-- Filtrar bien el por id de proyecto. Parce que está bien pero revisar.
+- Revisión manual hecha, ahora revisar soluciones bugs propuestas por la IA. Pendiente la del selector de prioridad.
