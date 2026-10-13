@@ -508,7 +508,7 @@ export class DOMRenderer {
             DOMRenderer.renderTODOS(dataProject, tabNameFormatted);
         });
         DOMRenderer.BTNNOTES.addEventListener('click', (event) => {
-            const data = EventHandler.menuTabNotes()
+            const data = EventHandler.menuTabNotes(event)
             DOMRenderer.renderNotes(data);
         });
         DOMRenderer.BTNCREATE.addEventListener('click', (event) => {
@@ -1029,9 +1029,9 @@ class EventHandler {
         Manager.deleter('todo', todoID);
         const data = Storer.getItems('todo');
         if (Storer.currentTabType === 'projects') {
-            const dataFiltered = Utils.projectFilter(data, Storer.currentTabName) 
-            DOMRenderer.renderTODOS(dataFiltered, Storer.currentTabName);
-            return
+            const dataFiltered = Utils.projectFilter(data, Storer.currentTabId);
+            console.log(dataFiltered)
+            return dataFiltered
         }
         
         const dataFiltered = Utils.todoFilter(data, Storer.currentTabName);

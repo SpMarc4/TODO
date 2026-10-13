@@ -147,7 +147,6 @@ div[class^="modal"] {
 }
 
 .todo > * {
-    border: var(--delete-color) 2px solid;
     min-height: 0;
 }
 
@@ -390,7 +389,6 @@ div[class^="modal-"] {
     height: 50%;
     display: flex;
     padding: 12px;
-    border: 2px solid var(--delete-color);
     background-color: var(--main-color);
     border-radius: 12px;
     overflow-x: auto;
