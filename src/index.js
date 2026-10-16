@@ -94,7 +94,7 @@ export class Storer {
             return JSON.stringify(newListObj);
         }
 
-        console.error('[Storer] No se puede actualizar la lista.')
+        throw new Error('[Storer] No se puede actualizar la lista.')
     }
     
     static #itemChecker(itemType) {
@@ -231,6 +231,7 @@ export class Storer {
 
         catch{
             console.error(`[Storer]: No se han podido obtener los ${itemStorage}.`);
+            localStorage.removeItem(itemType);
             return []
         }
 
@@ -408,12 +409,11 @@ export class Manager {
         const oldTodo = Storer.getItem('todo', data.id);
         console.log('viejo TODO', oldTodo);
 
-        oldTodo.id = data.id ? data.id : oldTodo.id;
-        oldTodo.name = data.name ? data.name : oldTodo.name;
-        oldTodo.date = data.date ? data.date : oldTodo.date;
-        oldTodo.description = data.description ? data.description : oldTodo.description;
-        oldTodo.priority = data.priority ? data.priority : oldTodo.priority;
-        oldTodo.finalized = data.finalized ? data.finalized : oldTodo.finalized;
+        oldTodo.id = data.id;
+        oldTodo.name = data.name;
+        oldTodo.date = data.date;
+        oldTodo.description = data.description;
+        oldTodo.priority = data.priority;
 
         console.log('nuevo TODO', oldTodo);
         Storer.saveItem('todo', oldTodo, 'edit')
@@ -497,21 +497,21 @@ export class DOMRenderer {
         DOMRenderer.BTNTODOS.addEventListener('click', (event) => {
             const dataProject = EventHandler.menuTabTODOFilter(event)
             const tabName = Storer.currentTabName;
-            const tabNameFormatted = tabName.at(0).toUpperCase() + tabName.slice(1).toLowerCase();
+            const tabNameFormatted = tabName.at(0).toUpperCase() + tabName.slice(1);
             DOMRenderer.renderTODOS(dataProject, tabNameFormatted);
 
         });
         DOMRenderer.BTNTODAY.addEventListener('click', (event) => {
             const dataProject = EventHandler.menuTabTODOFilter(event)
             const tabName = Storer.currentTabName;
-            const tabNameFormatted = tabName.at(0).toUpperCase() + tabName.slice(1).toLowerCase();
+            const tabNameFormatted = tabName.at(0).toUpperCase() + tabName.slice(1);
             DOMRenderer.renderTODOS(dataProject, tabNameFormatted);
 
         });
         DOMRenderer.BTNWEEK.addEventListener('click', (event) => {
             const dataProject = EventHandler.menuTabTODOFilter(event)
             const tabName = Storer.currentTabName;
-            const tabNameFormatted = tabName.at(0).toUpperCase() + tabName.slice(1).toLowerCase();
+            const tabNameFormatted = tabName.at(0).toUpperCase() + tabName.slice(1);
             DOMRenderer.renderTODOS(dataProject, tabNameFormatted);
         });
         DOMRenderer.BTNNOTES.addEventListener('click', (event) => {
@@ -544,7 +544,7 @@ export class DOMRenderer {
             projectButton.addEventListener('click', (event) => {
                 const dataProject = EventHandler.projectSidebarFilter(event);
                 const tabName = Storer.currentTabName;
-                const tabNameFormatted = tabName.at(0).toUpperCase() + tabName.slice(1).toLowerCase();
+                const tabNameFormatted = tabName.at(0).toUpperCase() + tabName.slice(1);
                 DOMRenderer.renderTODOS(dataProject, tabNameFormatted)
             })
 
@@ -564,11 +564,11 @@ export class DOMRenderer {
                     DOMRenderer.renderTODOS(data, 'Todos');
                 }
 
-                const data = Storer.getItems('todo');
-                const dataFiltered = Utils.todoFilter(data, Storer.currentTabName);
-                const tabName = Storer.currentTabName;
-                const tabNameFormatted = tabName.at(0).toUpperCase() + tabName.slice(1).toLowerCase();
-                DOMRenderer.renderTODOS(dataFiltered, tabNameFormatted);
+                else {
+                    const data = Utils.mainDataFilter();
+                    const tabType = Storer.currentTabType;
+                    DOMRenderer.renderMain(data, tabType);
+                }
             })
             
             projectContainer.appendChild(projectButton);
@@ -645,7 +645,7 @@ export class DOMRenderer {
             colDelete.addEventListener('click', (event) => {
                 const dataFiltered = EventHandler.menuTODODeleter(event);
                 const tabName = Storer.currentTabName;
-                const tabNameFormatted = tabName.at(0).toUpperCase() + tabName.slice(1).toLowerCase();
+                const tabNameFormatted = tabName.at(0).toUpperCase() + tabName.slice(1);
                 DOMRenderer.renderTODOS(dataFiltered, tabNameFormatted);
             })
 
@@ -708,7 +708,7 @@ export class DOMRenderer {
 
         else if (currentTabType === 'projects' || currentTabType === 'todos') {
             const tabName = Storer.currentTabName;
-            const tabNameFormatted = tabName.at(0).toUpperCase() + tabName.slice(1).toLowerCase();
+            const tabNameFormatted = tabName.at(0).toUpperCase() + tabName.slice(1);
             DOMRenderer.renderTODOS(data, tabNameFormatted);
         }
     }
@@ -1090,8 +1090,7 @@ class EventHandler {
         }
 
         catch {
-            console.error('[EventHandler]: No es posible acceder al todo.')
-            return {};
+            throw new Error('[EventHandler]: No es posible acceder al todo.');
         }
        
     }
@@ -1136,7 +1135,7 @@ class EventHandler {
         DOMRenderer.renderDate();
         const data = Storer.getItems('todo');
         const tabName = Storer.currentTabName;
-        const tabNameFormatted = tabName.at(0).toUpperCase() + tabName.slice(1).toLowerCase();
+        const tabNameFormatted = tabName.at(0).toUpperCase() + tabName.slice(1);
         DOMRenderer.renderTODOS(data, tabNameFormatted);
         const projects = Storer.getItems('project');
         DOMRenderer.renderProjectSidebar(projects);
