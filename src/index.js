@@ -601,6 +601,22 @@ export class DOMRenderer {
             
             const colPrior = document.createElement('div');
             colPrior.setAttribute('class', 'col-prior');
+            let color;
+            switch (todo.priority) {
+                case 'low':
+                    color = 'green';
+                    break
+                case 'medium':
+                    color = 'yellow';
+                    break
+                case 'high':
+                    color = 'red';
+                    break
+            }
+
+            console.log(color)
+
+            colPrior.setAttribute('style', `background-color: ${color}; opacity: 0.2`);
 
             const colCheck = document.createElement('input');
             colCheck.setAttribute('type', 'checkbox');
