@@ -231,7 +231,8 @@ export class Storer {
 
         catch{
             console.error(`[Storer]: No se han podido obtener los ${itemStorage}.`);
-            localStorage.removeItem(itemType);
+            const itemStorage = Storer.mapper[itemType];
+            localStorage.removeItem(itemStorage);
             return []
         }
 
@@ -320,7 +321,7 @@ export class Utils {
                             return false
                         }
                         const currentDate = format(new Date(), 'dd-MM-yyyy');
-                        const todoDate = format(new Date(todo.date), 'dd-MM-yyyy');
+                        const todoDate = format(parseISO(todo.date), 'dd-MM-yyyy');
                         return currentDate === todoDate
                     }
 
@@ -414,6 +415,7 @@ export class Manager {
         oldTodo.date = data.date;
         oldTodo.description = data.description;
         oldTodo.priority = data.priority;
+        if (data.finalized !== undefined) oldTodo.finalized = data.finalized;
 
         console.log('nuevo TODO', oldTodo);
         Storer.saveItem('todo', oldTodo, 'edit')
@@ -484,7 +486,7 @@ export class DOMRenderer {
 
 
     static #clockTick() {
-        const date = format(new Date(), 'dd-MM-yyy');
+        const date = format(new Date(), 'dd-MM-yyyy');
         DOMRenderer.FOOTER.textContent = 'Date: ' + date;
     }
 
