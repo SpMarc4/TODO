@@ -83,15 +83,16 @@ export class Storer {
         if (mode === 'create') {
             listObj.push(item);
             newListObj = listObj;
+            return JSON.stringify(newListObj);
         }
 
         else if (mode === 'edit') {
             newListObj = listObj.map(
                 (object) => object.id === item.id ? item : object
             )
+            return JSON.stringify(newListObj);
         }
 
-        return JSON.stringify(newListObj);
     }
     
     static #itemChecker(itemType) {
@@ -228,6 +229,7 @@ export class Storer {
 
         catch{
             console.error(`[Storer]: No se han podido obtener los ${itemStorage}.`);
+            return []
         }
 
     }
@@ -394,6 +396,7 @@ export class Manager {
                 data.description,
                 data.date,
                 data.priority,
+                data.finalized,
                 data.project ? data.project : null
             )
 
@@ -409,6 +412,7 @@ export class Manager {
         oldTodo.date = data.date;
         oldTodo.description = data.description;
         oldTodo.priority = data.priority;
+        oldTodo.finalized = data.finalized,
 
         console.log('nuevo TODO', oldTodo);
         Storer.saveItem('todo', oldTodo, 'edit')
@@ -480,11 +484,12 @@ export class DOMRenderer {
 
     static #clockTick() {
         const date = format(new Date(), 'dd-MM-yyy');
-        DOMRenderer.FOOTER.textContent = 'Date: ' + date
+        DOMRenderer.FOOTER.textContent = 'Date: ' + date;
     }
 
     static renderDate() {
-        setInterval(DOMRenderer.#clockTick, 30000)
+        DOMRenderer.#clockTick();
+        setInterval(DOMRenderer.#clockTick, 30000);
     }
 
     static renderBtns() {
@@ -537,7 +542,9 @@ export class DOMRenderer {
             projectButton.textContent = project.name;
             projectButton.addEventListener('click', (event) => {
                 const dataProject = EventHandler.projectSidebarFilter(event);
-                DOMRenderer.renderTODOS(dataProject, Storer.currentTabName)
+                const tabName = Storer.currentTabName;
+                const tabNameFormatted = tabName.at(0).toUpperCase() + tabName.slice(1).toLowerCase();
+                DOMRenderer.renderTODOS(dataProject, tabNameFormatted)
             })
 
             const deleteButton = document.createElement('button');
@@ -549,6 +556,9 @@ export class DOMRenderer {
                 DOMRenderer.renderProjectSidebar(projects);
 
                 if (Storer.currentTabId === event.target.parentElement.id) {
+                    Storer.currentTabId = '';
+                    Storer.currentTabName = 'todos';
+                    Storer.currentTabType = 'todos';
                     const data = Storer.getItems('todo');
                     DOMRenderer.renderTODOS(data, 'Todos');
                 }
@@ -586,6 +596,9 @@ export class DOMRenderer {
             const colCheck = document.createElement('input');
             colCheck.setAttribute('type', 'checkbox');
             colCheck.setAttribute('class', 'col-check');
+            colCheck.addEventListener('click', (event) => {
+                EventHandler.checkBoxAlter(event);
+            })
 
             const colName = document.createElement('div');
             colName.setAttribute('class', 'col-name');
@@ -687,8 +700,9 @@ export class DOMRenderer {
         }
 
         else if (currentTabType === 'projects' || currentTabType === 'todos') {
-            const tabName = Storer.currentTabName.at(0).toUpperCase() + Storer.currentTabName.slice(1);
-            DOMRenderer.renderTODOS(data, tabName);
+            const tabName = Storer.currentTabName;
+            const tabNameFormatted = tabName.at(0).toUpperCase() + tabName.slice(1).toLowerCase();
+            DOMRenderer.renderTODOS(data, tabNameFormatted);
         }
     }
 
@@ -826,6 +840,7 @@ export class DOMRenderer {
         selectPriority.setAttribute('id', 'todo-field-priority');
         selectPriority.setAttribute('name', 'priority');
         selectPriority.setAttribute('value', priority);
+        selectPriority.setAttribute('required', '');
         const optionLow = document.createElement('option');
         optionLow.setAttribute('value', 'low');
         optionLow.textContent = 'Low';
@@ -838,6 +853,7 @@ export class DOMRenderer {
         selectPriority.appendChild(optionLow);
         selectPriority.appendChild(optionMedium);
         selectPriority.appendChild(optionHigh);
+        selectPriority.value = priority;
 
         formTODOFieldPriority.appendChild(todoFieldPriority);
         formTODOFieldPriority.appendChild(selectPriority);
@@ -999,6 +1015,16 @@ class EventHandler {
 
     static projectSidebarDeleter(event) {
         const projectID = event.target.parentElement.id;
+        const projectTodos = Storer.getItems('todo').filter(
+            (todo) => {return todo.project === projectID}
+        );
+
+        console.log(projectTodos)
+
+        for (const projectTodo of projectTodos) {
+            Manager.deleter('todo', projectTodo.id);
+        }
+
         Manager.deleter('project', projectID);
         const projects = Storer.getItems('project');
 
@@ -1050,9 +1076,16 @@ class EventHandler {
         const todoID = event.target.parentElement.parentElement.id;
         console.log(todoID)
         const data = Storer.getItem('todo', todoID);
-        data['mode'] = mode;
-        console.log(data)
-        return data;
+        try {
+            data['mode'] = mode;
+            console.log(data)
+            return data;
+        }
+
+        catch {
+            console.error('[EventHandler]: No es posible acceder al todo.')
+        }
+       
     }
 
     static artifactHandler(event, itemType, id) {
@@ -1074,6 +1107,21 @@ class EventHandler {
         Manager.editor(itemType, data)
     }
 
+    static checkBoxAlter(event) {
+        const checkBox = event.target;
+        const todoID = event.target.parentElement.parentElement.id;
+        const todo = Storer.getItem('todo', todoID);
+        try {
+            todo['finalized'] = checkBox.checked;
+            Manager.editor('todo', todo);
+        }
+
+        catch {
+            console.error('[EventHandler]: No es posible acceder al todo.')
+        }
+        
+    }
+
     static init() {
 
         DOMRenderer.renderBtns();
@@ -1082,7 +1130,8 @@ class EventHandler {
         const tabName = Storer.currentTabName;
         const tabNameFormatted = tabName.at(0).toUpperCase() + tabName.slice(1).toLowerCase();
         DOMRenderer.renderTODOS(data, tabNameFormatted);
-
+        const projects = Storer.getItems('project');
+        DOMRenderer.renderProjectSidebar(projects);
     }
 }
 
