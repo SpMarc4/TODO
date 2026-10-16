@@ -80,6 +80,7 @@ export class Storer {
         const itemStorage = Storer.mapper[itemType];
         let newListObj = [];
         const listObj = JSON.parse(localStorage.getItem(itemStorage));
+        
         if (mode === 'create') {
             listObj.push(item);
             newListObj = listObj;
@@ -93,6 +94,7 @@ export class Storer {
             return JSON.stringify(newListObj);
         }
 
+        console.error('[Storer] No se puede actualizar la lista.')
     }
     
     static #itemChecker(itemType) {
@@ -396,7 +398,6 @@ export class Manager {
                 data.description,
                 data.date,
                 data.priority,
-                data.finalized,
                 data.project ? data.project : null
             )
 
@@ -407,12 +408,12 @@ export class Manager {
         const oldTodo = Storer.getItem('todo', data.id);
         console.log('viejo TODO', oldTodo);
 
-        oldTodo.id = data.id;
-        oldTodo.name = data.name;
-        oldTodo.date = data.date;
-        oldTodo.description = data.description;
-        oldTodo.priority = data.priority;
-        oldTodo.finalized = data.finalized,
+        oldTodo.id = data.id ? data.id : oldTodo.id;
+        oldTodo.name = data.name ? data.name : oldTodo.name;
+        oldTodo.date = data.date ? data.date : oldTodo.date;
+        oldTodo.description = data.description ? data.description : oldTodo.description;
+        oldTodo.priority = data.priority ? data.priority : oldTodo.priority;
+        oldTodo.finalized = data.finalized ? data.finalized : oldTodo.finalized;
 
         console.log('nuevo TODO', oldTodo);
         Storer.saveItem('todo', oldTodo, 'edit')
@@ -562,6 +563,12 @@ export class DOMRenderer {
                     const data = Storer.getItems('todo');
                     DOMRenderer.renderTODOS(data, 'Todos');
                 }
+
+                const data = Storer.getItems('todo');
+                const dataFiltered = Utils.todoFilter(data, Storer.currentTabName);
+                const tabName = Storer.currentTabName;
+                const tabNameFormatted = tabName.at(0).toUpperCase() + tabName.slice(1).toLowerCase();
+                DOMRenderer.renderTODOS(dataFiltered, tabNameFormatted);
             })
             
             projectContainer.appendChild(projectButton);
@@ -599,7 +606,7 @@ export class DOMRenderer {
             colCheck.addEventListener('click', (event) => {
                 EventHandler.checkBoxAlter(event);
             })
-
+            colCheck.checked = todo.finalized;
             const colName = document.createElement('div');
             colName.setAttribute('class', 'col-name');
             colName.textContent = todo.name;
@@ -1084,6 +1091,7 @@ class EventHandler {
 
         catch {
             console.error('[EventHandler]: No es posible acceder al todo.')
+            return {};
         }
        
     }
