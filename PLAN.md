@@ -464,3 +464,5 @@ PENDIENTE
 
 
 - Revisión manual hecha, ahora revisar soluciones bugs propuestas por la IA. Pendiente la del selector de prioridad.
+
+- Modularizar
