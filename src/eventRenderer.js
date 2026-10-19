@@ -1,6 +1,7 @@
 import { Storer, Manager } from "./main.js";
 import { Utils } from "./utils.js";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
+import { TODO, Note, Project } from "./artifacts.js";
 
 export class DOMRenderer {
 
@@ -680,8 +681,55 @@ export class EventHandler {
         
     }
 
-    static init() {
+    static initArtifacts() {
+        const todos = Storer.getItems('todo');
+        if (todos.length < 1) {
+            const data = {
+                name: 'Template TODO',
+                description: 'Description',
+                date: new Date().toISOString().split('T')[0],
+                priority: 'low'
+            }
 
+            Manager.editor('todo', data);
+        }
+        const notes = Storer.getItems('note');
+        if (notes.length < 1) {
+            const data = {
+                name: 'Template Note',
+                description: 'Note Description',
+            }
+
+            Manager.editor('note', data);
+        }
+        const projects = Storer.getItems('project');
+        if (projects.length < 1) {
+            const dataProject = {
+                name: 'ProjectTemp',
+                description: 'Project Description'
+            }
+
+            Manager.editor('project', dataProject);
+
+            const project = Storer.getItems('project');
+            const projectID = project.at(0).id;
+            console.log('proyecto: ',project)
+            console.log('id proyecto: ',projectID)
+
+            const dataTodo = {
+                name: 'Template TODO Project',
+                description: 'Description TODO Project',
+                date: new Date().toISOString().split('T')[0],
+                priority: 'high',
+                project: projectID
+            }
+
+            Manager.editor('todo', dataTodo);
+        }
+    }
+
+    static init() {
+        EventHandler.initArtifacts();
         DOMRenderer.renderBtns();
         DOMRenderer.renderDate();
         const data = Storer.getItems('todo');
