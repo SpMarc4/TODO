@@ -1,7 +1,6 @@
 import { Storer, Manager } from "./main.js";
 import { Utils } from "./utils.js";
-import { format, parseISO } from "date-fns";
-import { TODO, Note, Project } from "./artifacts.js";
+import { format } from "date-fns";
 
 export class DOMRenderer {
 
@@ -101,7 +100,7 @@ export class DOMRenderer {
                 }
 
                 else {
-                    const data = Utils.mainDataFilter();
+                    const data = EventHandler.mainDataFilter();
                     const tabType = Storer.currentTabType;
                     DOMRenderer.renderMain(data, tabType);
                 }
@@ -429,7 +428,7 @@ export class DOMRenderer {
         formTODO.appendChild(btnAdd);
         formTODO.addEventListener('submit', function (event) {
             EventHandler.artifactHandler(event, 'todo', id);
-            const data = Utils.mainDataFilter();
+            const data = EventHandler.mainDataFilter();
             const tabType = Storer.currentTabType;
             DOMRenderer.renderMain(data, tabType);
             DOMRenderer.renderCloseModal();
@@ -549,7 +548,7 @@ export class DOMRenderer {
         formNote.appendChild(btnAdd);
         formNote.addEventListener('submit', function (event) {
             EventHandler.artifactHandler(event, 'note');
-            const data = Utils.mainDataFilter();
+            const data = EventHandler.mainDataFilter();
             const tabType = Storer.currentTabType;
             DOMRenderer.renderMain(data, tabType);
             DOMRenderer.renderCloseModal();
@@ -738,5 +737,28 @@ export class EventHandler {
         DOMRenderer.renderTODOS(data, tabNameFormatted);
         const projects = Storer.getItems('project');
         DOMRenderer.renderProjectSidebar(projects);
+    }
+
+    static mainDataFilter() {
+        const tabType = Storer.currentTabType;
+        const tabName = Storer.currentTabName;
+
+        if (tabType === 'projects') {
+            const projectID = Storer.currentTabId;
+            const todos = Storer.getItems('todo');
+            const projectFilter = Utils.projectFilter(todos, projectID);
+            return projectFilter
+        }
+
+        else if (tabType === 'todos') {
+            const todos = Storer.getItems('todo')
+            const todoFilter =  Utils.todoFilter(todos, tabName);
+            return todoFilter
+        }
+
+        else if (tabType === 'notes') {
+            const notes = Storer.getItems('note');
+            return notes
+        }
     }
 }

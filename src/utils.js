@@ -1,7 +1,5 @@
 import { format, parseISO, getISOWeek, getISOWeekYear } from "date-fns";
 
-import { Storer } from './main.js';
-
 export class Utils {
 
     static generateID() {
@@ -89,26 +87,4 @@ export class Utils {
         )
     }
 
-    static mainDataFilter() {
-        const tabType = Storer.currentTabType;
-        const tabName = Storer.currentTabName;
-
-        if (tabType === 'projects') {
-            const projectID = Storer.currentTabId;
-            const todos = Storer.getItems('todo');
-            const projectFilter = Utils.projectFilter(todos, projectID);
-            return projectFilter
-        }
-
-        else if (tabType === 'todos') {
-            const todos = Storer.getItems('todo')
-            const todoFilter =  Utils.todoFilter(todos, tabName);
-            return todoFilter
-        }
-
-        else if (tabType === 'notes') {
-            const notes = Storer.getItems('note');
-            return notes
-        }
-    }
 }
