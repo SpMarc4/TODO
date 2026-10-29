@@ -23,8 +23,12 @@
   },
   "homepage": "https://github.com/SpMarc4/TODO#readme",
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "css-loader": "^7.1.4",
+    "eslint": "^10.13.0",
+    "eslint-config-prettier": "^10.1.8",
     "html-webpack-plugin": "^5.6.7",
+    "prettier": "3.9.10",
     "style-loader": "^4.0.0",
     "webpack": "^5.108.4",
     "webpack-cli": "^7.2.1",
